@@ -1,5 +1,6 @@
 package com.egci428.internstation
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -42,7 +43,9 @@ class Register : AppCompatActivity() {
         image = findViewById(R.id.imageView)
 
         submitBtn.setOnClickListener {
-            //submitData()
+            submitData()
+            val intent = Intent(this,Login::class.java)
+            startActivity(intent)
         }
 
     }
@@ -76,6 +79,8 @@ class Register : AppCompatActivity() {
         }
         if(passwordText!=repasswordText){
             password.error = "Password does not match"
+            repassword.error = "Password does not match"
+
             password.text.clear()
             repassword.text.clear()
             return
@@ -83,9 +88,9 @@ class Register : AppCompatActivity() {
 
         var db = dataReference.collection("userData")
         val dataID = db.document().id
-        val userInfoData = userData(dataID, usernameText,
+        val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
-        db.add(userInfoData)
+            db.add(userInfoData)
             .addOnSuccessListener { result ->
                 Toast.makeText(applicationContext,"Register Successfully",Toast.LENGTH_LONG).show()
             }
@@ -95,3 +100,5 @@ class Register : AppCompatActivity() {
     }
 
 }
+
+

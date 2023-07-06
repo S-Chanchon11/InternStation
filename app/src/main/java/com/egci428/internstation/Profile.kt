@@ -18,7 +18,7 @@ class Profile : AppCompatActivity() {
     lateinit var Profile: ImageView
     lateinit var name: EditText
     lateinit var editBtn: Button
-    lateinit var dataList: MutableList<userData>
+    lateinit var dataList: MutableList<UserData>
     lateinit var edit: KeyListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +46,7 @@ class Profile : AppCompatActivity() {
             .addOnSuccessListener { snapshot ->
                 if(snapshot!=null){
                     dataList.clear()
-                    val Data = snapshot.toObjects(userData::class.java)
+                    val Data = snapshot.toObjects(UserData::class.java)
                     for(data in  Data){
                         dataList.add(data)
                     }

@@ -18,7 +18,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var navigationView: NavigationView
     lateinit var drawerLayout: DrawerLayout
 
-    //////////////////////////////////////////////////////////////////////////////////////
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,13 +26,12 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         title = findViewById(R.id.titleText)
         navigationView = findViewById(R.id.navigaionView)
         navigationView.setNavigationItemSelectedListener(this)
-        //////////////////////////////////////////////////////////////////////////////////////
+
         title.setText("Main Menu")
-        //////////////////////////////////////////////////////////////////////////////////////
+
         dropDown.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
-        //////////////////////////////////////////////////////////////////////////////////////
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -45,6 +43,10 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return true
         } else if(id==R.id.profile){
             val intent = Intent(this,Profile::class.java)
+            startActivity(intent)
+            return true
+        } else if(id==R.id.logout){
+            val intent = Intent(this,Login::class.java)
             startActivity(intent)
             return true
         }

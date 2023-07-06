@@ -27,10 +27,6 @@
     <item
         android:title=""
         />
-    <item
-        android:title=""
-        />
-
 
     <item
         android:title="@string/setting">
@@ -44,9 +40,10 @@
             <item
                 android:id="@+id/notification"
                 android:title="Notification"/>
+            <item
+                android:id="@+id/logout"
+                android:title="Logout"/>
         </menu>
     </item>
-
-
 
 </menu>
