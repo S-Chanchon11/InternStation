@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawerLayout"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Home">
@@ -30,8 +29,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="80dp"
                 android:layout_height="60dp"
-                android:src="@android:drawable/ic_menu_more"
-                />
+                android:src="@android:drawable/ic_menu_more" />
 
 
             <TextView
@@ -43,13 +41,9 @@
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="24sp"
-                app:layout_constraintTop_toTopOf="parent"
-                 />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </LinearLayout>
-
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -58,8 +52,24 @@
         android:id="@+id/navigaionView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/menu"
-        android:layout_gravity="start" />
+        android:layout_gravity="start"
+        app:menu="@menu/menu">
+
+    </com.google.android.material.navigation.NavigationView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>
