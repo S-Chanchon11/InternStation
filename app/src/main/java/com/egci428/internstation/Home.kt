@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -30,7 +31,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -47,7 +50,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var navigationView: NavigationView
     lateinit var drawerLayout: DrawerLayout
     lateinit var recyclerView: RecyclerView
-    lateinit var adapter: CompanyAdapter
+    //lateinit var adapter: CompanyAdapter
     lateinit var dataReference: FirebaseFirestore
     lateinit var dataList: MutableList<CompanyData>
     private lateinit var mMap: GoogleMap
@@ -73,7 +76,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView = findViewById(R.id.recyclerView)
 
         dataList = mutableListOf()
-        adapter = CompanyAdapter(dataList)
+
+        //adapter = CompanyAdapter(dataList)
         /*
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -82,30 +86,57 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         mapFragment.getMapAsync(this)
         */
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationListener = object : LocationListener{
+        locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 lat = location.latitude
                 lng = location.longitude
-                Log.d("===================",location.latitude.toString() + location.longitude.toString())
+                Log.d(
+                    "===================",
+                    location.latitude.toString() + location.longitude.toString()
+                )
             }
         }
-
-        //request_location()
+                //request_location()
         dataReference = FirebaseFirestore.getInstance()
         navigationView.setNavigationItemSelectedListener(this)
-        val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
+
+        val linearLayoutManager =
+            LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = linearLayoutManager
-        recyclerView.adapter = adapter
-        adapter.notifyDataSetChanged()
+        loadJson()
+
+
+
 
         title.setText("Main Menu")
 
         dropDown.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
-
     }
 
+
+
+    private fun readFirestore(){
+        var db = dataReference.collection("companyData")
+        db.orderBy("name").get()
+            .addOnSuccessListener { snapshot ->
+                if(snapshot!=null){
+                    dataList.clear()
+                    val dataObj = snapshot.toObjects(CompanyData::class.java)
+                    Log.d("LOGIN","BEGIN REQUEST DATA")
+                    Log.d("LOGIN",dataObj.toString())
+
+                    for(dataObj in dataObj){
+                        dataList.add(dataObj)
+
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
+            }
+    }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         val id = item.itemId
@@ -128,28 +159,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
         return false
     }
-
-    private fun readFirestore(){
-        var db = dataReference.collection("companyData")
-        db.orderBy("name").get()
-            .addOnSuccessListener { snapshot ->
-                if(snapshot!=null){
-                    dataList.clear()
-                    val dataObj = snapshot.toObjects(CompanyData::class.java)
-                    Log.d("LOGIN","BEGIN REQUEST DATA")
-                    Log.d("LOGIN",dataObj.toString())
-
-                    for(dataObj in dataObj){
-                        dataList.add(dataObj)
-
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
-            }
-    }
-
     private fun request_location() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -197,31 +206,54 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
          */
     }
 
-    fun fetchJson(){
-        val request = Request.Builder()
-            .url(jsonURL)
-            .build()
+    private fun loadJson() {
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+        val loadJsonAsync = object: AsyncTask<String, String, String>() {
+
+            override fun onPreExecute() {
+                Toast.makeText(this@Home,"Please wait", Toast.LENGTH_SHORT).show()
             }
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                    for ((name, value) in response.headers) {
-                        println("$name: $value")
+
+            override fun onPostExecute(result: String?) {
+                super.onPostExecute(result);
+
+                var companyObj: List<CompanyData>
+                companyObj = Gson().fromJson<List<CompanyData>>(result,object : TypeToken<List<CompanyData>>() {}.type)
+                var adapter = CompanyAdapter(companyObj)
+                recyclerView.adapter = adapter
+
+                adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener{
+                    override fun onItemClick(position: Int) {
+                        Toast.makeText(this@Home,"Cicked on $position",Toast.LENGTH_SHORT).show()
                     }
-                    val body = response.body!!.string()
 
-                    if(body == null) return@use
-                    val gson = GsonBuilder().create()
-                    val Data = gson.fromJson(body,
-                        CompanyData::class.java)
+                })
 
 
-                }
+                adapter.notifyDataSetChanged()
+                Log.d("Tag","Load to Adapter")
+
+
             }
-        })
+
+            override fun doInBackground(vararg params: String): String {
+                val builder = Request.Builder()
+                builder.url(params[0])
+                val request = builder.build()
+                try {
+                    val response = client.newCall(request).execute()
+                    return response.body!!.string()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                return ""
+            }
+
+        }
+
+        val url_get_data = StringBuilder()
+        url_get_data.append(jsonURL)
+        loadJsonAsync.execute(url_get_data.toString())
     }
 }

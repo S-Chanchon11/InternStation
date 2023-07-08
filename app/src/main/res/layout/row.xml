@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/bebas_neue"
             android:text="Company"
-            android:textColor="@color/Nblue"
+            android:textColor="@color/navyBlue"
             android:textSize="20sp"
             android:textStyle="bold" />
 
