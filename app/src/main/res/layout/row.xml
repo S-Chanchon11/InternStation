@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="8dp"
     android:padding="8dp"
     app:cardCornerRadius="8dp"
@@ -13,34 +14,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="8dp">
 
         <TextView
-            android:id="@+id/txtName"
+            android:id="@+id/companyTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title"
-            android:textColor="#3F51B5"
-            android:textSize="18sp"
+            android:fontFamily="@font/bebas_neue"
+            android:text="Company"
+            android:textColor="@color/Nblue"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txtYear"
+            android:id="@+id/jobOf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2000"
-            android:textSize="12sp"
-            android:textStyle="italic" />
+            android:text="job"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold|italic" />
 
         <TextView
-            android:id="@+id/txtStar"
+            android:id="@+id/durationTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Star"
-            android:textColor="#009688"
-            android:textSize="14sp" />
+            android:text="duration"
+            android:textColor="#4E4E4E"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/qualiTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Qualification"
+            android:textColor="#4E4E4E"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
-

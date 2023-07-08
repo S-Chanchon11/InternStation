@@ -19,15 +19,15 @@ class CompanyAdapter (private val companyObject: List<CompanyData>): RecyclerVie
         return companyObject.size
     }
     override fun onBindViewHolder(holder: CompanyViewHolder, position: Int) {
-        holder.txtJob.text = companyObject[position].name
-        holder.txtBenefit.text = companyObject[position].job
-        holder.txtQualif.text = companyObject[position].benefit
-        //holder.txtDuration.text = companyObject[position].companyID[position].jobOf[position].duration
+        holder.txtName.text = companyObject[position].company
+        holder.txtJob.text = companyObject[position].job
+        holder.txtDuration.text = companyObject[position].duration
+        holder.txtQualification.text = companyObject[position].qualification
     }
 }
 class CompanyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-    var txtJob = itemView.findViewById<TextView>(R.id.txtName)
-    var txtBenefit = itemView.findViewById<TextView>(R.id.txtYear)
-    var txtQualif = itemView.findViewById<TextView>(R.id.txtStar)
-    //var txtDuration = itemView.findViewById<TextView>(R.id.txtDuration)
+    var txtName = itemView.findViewById<TextView>(R.id.companyTxt)
+    var txtJob = itemView.findViewById<TextView>(R.id.jobOf)
+    var txtDuration = itemView.findViewById<TextView>(R.id.durationTxt)
+    var txtQualification = itemView.findViewById<TextView>(R.id.qualiTxt)
 }

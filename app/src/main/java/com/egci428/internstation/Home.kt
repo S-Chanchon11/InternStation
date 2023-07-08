@@ -56,7 +56,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     private var locationListener: LocationListener?=null
     val num = Random.nextInt(1, 20).toString()
     val jsonURL =
-        "https://internstation-47c4f-default-rtdb.firebaseio.com/Internship%20Company/Company%20"+num+".json"
+        "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
     private val client = OkHttpClient()
 
@@ -96,7 +96,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.adapter = adapter
-
         adapter.notifyDataSetChanged()
 
         title.setText("Main Menu")
@@ -142,6 +141,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
                     for(dataObj in dataObj){
                         dataList.add(dataObj)
+
                     }
                 }
             }
@@ -218,6 +218,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                     val gson = GsonBuilder().create()
                     val Data = gson.fromJson(body,
                         CompanyData::class.java)
+
+
                 }
             }
         })
