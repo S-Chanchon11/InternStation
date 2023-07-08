@@ -16,7 +16,7 @@ class Profile : AppCompatActivity() {
     lateinit var university: TextView
     lateinit var Dob: TextView
     lateinit var ProfileTitle: TextView
-    lateinit var Profile: ImageView
+    lateinit var Profilepic: ImageView
     lateinit var name: EditText
     lateinit var editBtn: Button
     lateinit var dataList: MutableList<UserData>
@@ -26,17 +26,15 @@ class Profile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         //dataReference = FirebaseFirestore.getInstance()
-        university = findViewById(R.id.universityTxt)
-        Dob = findViewById(R.id.dobTxt)
+        university = findViewById(R.id.university)
+        Dob = findViewById(R.id.Dob)
         ProfileTitle = findViewById(R.id.profileTitle)
-        Profile = findViewById(R.id.profilePic)
+        Profilepic = findViewById(R.id.profilePic)
         name = findViewById(R.id.nameTxt)
         editBtn = findViewById(R.id.editBtn)
         //readFirestoreData()
 
         editBtn.setOnClickListener {
-
-            name.isFocusable = true
 
         }
     }

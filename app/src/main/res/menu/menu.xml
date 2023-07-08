@@ -9,8 +9,8 @@
         android:id="@+id/applied"
         android:title="Applied"/>
     <item
-        android:id="@+id/calendar"
-        android:title="Calendar"
+        android:id="@+id/location"
+        android:title="My Location"
         />
     <item
         android:title=""

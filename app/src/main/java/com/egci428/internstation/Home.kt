@@ -30,6 +30,14 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.GsonBuilder
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okio.IOException
+import kotlin.random.Random
 
 
 class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -46,6 +54,11 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     private lateinit var binding: ActivityMapsBinding
     private var locationManager: LocationManager?=null
     private var locationListener: LocationListener?=null
+    val num = Random.nextInt(1, 20).toString()
+    val jsonURL =
+        "https://internstation-47c4f-default-rtdb.firebaseio.com/Internship%20Company/Company%20"+num+".json"
+
+    private val client = OkHttpClient()
 
     private var lat:Double = 0.0
     private var lng:Double = 0.0
@@ -58,13 +71,16 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         title = findViewById(R.id.titleText)
         navigationView = findViewById(R.id.navigaionView)
         recyclerView = findViewById(R.id.recyclerView)
-        dataList = mutableListOf()
 
+        dataList = mutableListOf()
+        adapter = CompanyAdapter(dataList)
+        /*
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        */
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener{
             override fun onLocationChanged(location: Location) {
@@ -73,8 +89,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 Log.d("===================",location.latitude.toString() + location.longitude.toString())
             }
         }
-        //request_location()
 
+        //request_location()
         dataReference = FirebaseFirestore.getInstance()
         navigationView.setNavigationItemSelectedListener(this)
         val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
@@ -104,6 +120,10 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return true
         } else if(id==R.id.logout){
             val intent = Intent(this,Login::class.java)
+            startActivity(intent)
+            return true
+        } else if(id==R.id.location){
+            val intent = Intent(this,MapsActivity::class.java)
             startActivity(intent)
             return true
         }
@@ -163,8 +183,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        //mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
         /*
         marker.setOnClickListener {
@@ -175,5 +195,31 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
 
          */
+    }
+
+    fun fetchJson(){
+        val request = Request.Builder()
+            .url(jsonURL)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    for ((name, value) in response.headers) {
+                        println("$name: $value")
+                    }
+                    val body = response.body!!.string()
+
+                    if(body == null) return@use
+                    val gson = GsonBuilder().create()
+                    val Data = gson.fromJson(body,
+                        CompanyData::class.java)
+                }
+            }
+        })
     }
 }
