@@ -5,7 +5,7 @@ package com.egci428.internstation.Data
 data class CompanyData (
     val benefit:String,
     val company:String,
-    val desc:String,
+    val description:String,
     val duration:String,
     val id:Int,
     val job:String,

@@ -57,6 +57,8 @@ class Login : AppCompatActivity() {
                             if(firebase_username==readUsername && firebase_password==readPassword){
                                 Log.d("LOGIN","USERNAME AND PASSWORD IS MATCH")
                                 val intent = Intent(this, Home::class.java)
+                                intent.putExtra("userID",dataObj.id)
+                                Log.d("LOGIN",dataObj.id)
                                 Toast.makeText(baseContext, "Login Success", Toast.LENGTH_SHORT).show()
                                 startActivity(intent)
                                 break

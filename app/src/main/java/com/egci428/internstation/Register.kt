@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,6 +15,9 @@ import com.egci428.internstation.Data.UserData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import okhttp3.internal.concurrent.Task
+import java.io.File
 import java.util.UUID
 
 class Register : AppCompatActivity() {
@@ -23,7 +28,6 @@ class Register : AppCompatActivity() {
     lateinit var Dob: EditText
     lateinit var university: EditText
     lateinit var resumeBtn: Button
-    lateinit var cvBtn: Button
     lateinit var password: EditText
     lateinit var repassword: EditText
     lateinit var submitBtn: Button
@@ -32,7 +36,6 @@ class Register : AppCompatActivity() {
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
     private var filename: String = ""
-    private var folderno: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,6 @@ class Register : AppCompatActivity() {
         Dob = findViewById(R.id.DateOfBirth)
         university = findViewById(R.id.university)
         resumeBtn = findViewById(R.id.button2)
-        cvBtn = findViewById(R.id.button3)
         password = findViewById(R.id.password)
         repassword = findViewById(R.id.password2)
         submitBtn = findViewById(R.id.signupBtn)
@@ -52,26 +54,27 @@ class Register : AppCompatActivity() {
 
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
-
+        filePath = Uri.fromFile(File("storage/emulated/0/Download"))
         //open file directory
-        val loadImage = registerForActivityResult(ActivityResultContracts.GetContent()){
-                uri: Uri? ->
-            filePath = uri
-            filename = UUID.randomUUID().toString()
-        }
+
 
         submitBtn.setOnClickListener {
-            submitData()
+            submitRegisData()
+            uploadPDF()
             val intent = Intent(this,Login::class.java)
             startActivity(intent)
         }
 
         resumeBtn.setOnClickListener {
-            loadImage.launch("resume/*")
+            val intent = Intent()
+            intent.setType("application/pdf")
+            intent.setAction(Intent.ACTION_GET_CONTENT)
+            startActivityForResult(Intent.createChooser(intent,"PDF"),11)
+            Log.d("RESULT", "resumeBTN")
         }
 
     }
-    private fun submitData(){
+    private fun submitRegisData(){
         val usernameText = username.text.toString()
         val fullnameText = fullname.text.toString()
         val DobText = Dob.text.toString()
@@ -112,32 +115,40 @@ class Register : AppCompatActivity() {
         val dataID = db.document().id
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
-            db.add(userInfoData)
+                db.add(userInfoData)
             .addOnSuccessListener { result ->
                 Toast.makeText(applicationContext,"Register Successfully",Toast.LENGTH_LONG).show()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
             }
+
+    }
+    private fun uploadPDF(){
         filename = "resume"
-        folderno = dataID
-        if (filePath != null){
-            Toast.makeText(applicationContext, "Uploading...", Toast.LENGTH_SHORT).show()
-            val resumeRef = storageReference!!.child("resume"+folderno+"/"+filename)
-            resumeRef.putFile(filePath!!)
-                .addOnSuccessListener {
-                    Toast.makeText(applicationContext, "File uploaded", Toast.LENGTH_SHORT).show()
+        var mRefrence= storageReference!!.child(filename)
+        try{
+            filePath?.let {
+                mRefrence.putFile(it).addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot? ->
+                    Toast.makeText(this,"Successfully uploaded",Toast.LENGTH_LONG).show()
                 }
-                .addOnFailureListener{
-                    Toast.makeText(applicationContext, "Fail to upload", Toast.LENGTH_SHORT).show()
-                }
-                .addOnProgressListener {taskSnapshot ->
-                    val progress = 100.0*taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
-                    Toast.makeText(applicationContext, "Uploaded "+ progress.toInt()+"% " , Toast.LENGTH_SHORT).show()
-                }
-        } else{
+            }
+        }
+        catch (e: Exception){
+            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==11 && resultCode==RESULT_OK){
+            Log.d("RESULT", "result is ok")
+            filePath=data!!.data
 
         }
+        Log.d("RESULT", "result is not ok")
+        Log.d("RESULT", requestCode.toString())
+        Log.d("RESULT", resultCode.toString())
     }
 
 }

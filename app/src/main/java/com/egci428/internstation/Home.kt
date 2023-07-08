@@ -22,8 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.egci428.internstation.Data.CompanyData
-import com.egci428.internstation.databinding.ActivityMapsBinding
-import com.google.android.gms.maps.CameraUpdateFactory
+
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,33 +37,34 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
-import okio.IOException
+
 import kotlin.random.Random
 
 
 class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
-    lateinit var dropDown:ImageView
-    lateinit var title:TextView
+    lateinit var dropDown: ImageView
+    lateinit var title: TextView
     lateinit var navigationView: NavigationView
     lateinit var drawerLayout: DrawerLayout
     lateinit var recyclerView: RecyclerView
-    //lateinit var adapter: CompanyAdapter
+    lateinit var userID:String
+
+    val DETAIL_REQUEST_CODE = 1001
     lateinit var dataReference: FirebaseFirestore
     lateinit var dataList: MutableList<CompanyData>
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
-    private var locationManager: LocationManager?=null
-    private var locationListener: LocationListener?=null
+    //private lateinit var binding: ActivityMapsBinding
+    private var locationManager: LocationManager? = null
+    private var locationListener: LocationListener? = null
     val num = Random.nextInt(1, 20).toString()
     val jsonURL =
         "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
     private val client = OkHttpClient()
-
-    private var lat:Double = 0.0
-    private var lng:Double = 0.0
+    lateinit var dataID:String
+    private var lat: Double = 0.0
+    private var lng: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +76,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView = findViewById(R.id.recyclerView)
 
         dataList = mutableListOf()
+        dataID = intent.getStringExtra("userID").toString()
+        Log.d("onCreate of Home",dataID)
+
 
         //adapter = CompanyAdapter(dataList)
         /*
@@ -96,7 +99,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 )
             }
         }
-                //request_location()
+        //request_location()
         dataReference = FirebaseFirestore.getInstance()
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -105,9 +108,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView.layoutManager = linearLayoutManager
         loadJson()
 
-
-
-
         title.setText("Main Menu")
 
         dropDown.setOnClickListener {
@@ -115,76 +115,91 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
     }
 
-
-
-    private fun readFirestore(){
-        var db = dataReference.collection("companyData")
-        db.orderBy("name").get()
+/*
+    private fun readFirestore(id:String) {
+        var db = dataReference.collection("userData")
+        db.orderBy("fullname").get()
             .addOnSuccessListener { snapshot ->
-                if(snapshot!=null){
+                if (snapshot != null) {
                     dataList.clear()
-                    val dataObj = snapshot.toObjects(CompanyData::class.java)
-                    Log.d("LOGIN","BEGIN REQUEST DATA")
-                    Log.d("LOGIN",dataObj.toString())
+                    val dataObj = snapshot.toObjects(UserData::class.java)
+                    Log.d("LOGIN", "BEGIN REQUEST DATA")
+                    Log.d("LOGIN", dataObj.toString())
 
-                    for(dataObj in dataObj){
-                        dataList.add(dataObj)
+                    for (dataObj in dataObj) {
+
+                        //dataList.add(dataObj)
 
                     }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Failed", Toast.LENGTH_SHORT).show()
             }
     }
+*/
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         val id = item.itemId
-        if(id==R.id.applied){
-            val intent = Intent(this,Applied::class.java)
+        if (id == R.id.applied) {
+            val intent = Intent(this, Applied::class.java)
             startActivity(intent)
             return true
-        } else if(id==R.id.profile){
-            val intent = Intent(this,Profile::class.java)
+        } else if (id == R.id.profile) {
+            val intent = Intent(this, Profile::class.java)
             startActivity(intent)
             return true
-        } else if(id==R.id.logout){
-            val intent = Intent(this,Login::class.java)
+        } else if (id == R.id.logout) {
+            val intent = Intent(this, Login::class.java)
             startActivity(intent)
             return true
-        } else if(id==R.id.location){
-            val intent = Intent(this,MapsActivity::class.java)
+        } else if (id == R.id.location) {
+            val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
             return true
         }
         return false
     }
+
     private fun request_location() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 //requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET), 10)
-                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION), 10)
+                requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ), 10
+                )
             }
             return
         }
 
-        locationManager!!.requestLocationUpdates("gps",1000, 0F, locationListener!!)
+        locationManager!!.requestLocationUpdates("gps", 1000, 0F, locationListener!!)
 
 
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode==10){
+        if (requestCode == 10) {
             request_location()
 
         } else
-            Log.d("Permission result","Fail")
+            Log.d("Permission result", "Fail")
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -208,30 +223,31 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
     private fun loadJson() {
 
-        val loadJsonAsync = object: AsyncTask<String, String, String>() {
+        val loadJsonAsync = object : AsyncTask<String, String, String>() {
 
             override fun onPreExecute() {
-                Toast.makeText(this@Home,"Please wait", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Home, "Please wait", Toast.LENGTH_SHORT).show()
             }
 
             override fun onPostExecute(result: String?) {
                 super.onPostExecute(result);
 
                 var companyObj: List<CompanyData>
-                companyObj = Gson().fromJson<List<CompanyData>>(result,object : TypeToken<List<CompanyData>>() {}.type)
+                companyObj = Gson().fromJson<List<CompanyData>>(result,
+                    object : TypeToken<List<CompanyData>>() {}.type)
                 var adapter = CompanyAdapter(companyObj)
                 recyclerView.adapter = adapter
 
-                adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener{
+                adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener {
                     override fun onItemClick(position: Int) {
-                        Toast.makeText(this@Home,"Cicked on $position",Toast.LENGTH_SHORT).show()
+
+                        val dataPos = companyObj[position]
+                        showDetail(dataPos,position)
+                        Toast.makeText(this@Home, "Cicked on $position", Toast.LENGTH_SHORT).show()
                     }
-
                 })
-
-
                 adapter.notifyDataSetChanged()
-                Log.d("Tag","Load to Adapter")
+                Log.d("Tag", "Load to Adapter")
 
 
             }
@@ -255,5 +271,19 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         val url_get_data = StringBuilder()
         url_get_data.append(jsonURL)
         loadJsonAsync.execute(url_get_data.toString())
+    }
+
+    private fun showDetail(company: CompanyData, position: Int){
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra("companyName", company.company)
+        intent.putExtra("jobOffer", company.job)
+        intent.putExtra("companyDes", company.description)
+        intent.putExtra("companyQualif", company.qualification)
+        intent.putExtra("companyBenefit", company.benefit)
+        intent.putExtra("companyDuration",company.duration)
+        intent.putExtra("userID",dataID)
+        Log.d("showdetail()","finished send intent")
+        startActivityForResult(intent, DETAIL_REQUEST_CODE)
+
     }
 }
