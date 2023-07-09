@@ -38,11 +38,8 @@ class CompanyAdapter (private val companyObject: List<CompanyData>): RecyclerVie
         Log.d("AdapterHolder", "success")
 
 
-
     }
 }
-
-
 
 class CompanyViewHolder(itemView: View, listener: CompanyAdapter.onItemClickListener): RecyclerView.ViewHolder(itemView){
     var txtName = itemView.findViewById<TextView>(R.id.companyTxt)

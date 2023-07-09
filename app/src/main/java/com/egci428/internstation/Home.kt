@@ -57,12 +57,12 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     //private lateinit var binding: ActivityMapsBinding
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
-    val num = Random.nextInt(1, 20).toString()
+
     val jsonURL =
         "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
     private val client = OkHttpClient()
-    lateinit var dataID:String
+
     private var lat: Double = 0.0
     private var lng: Double = 0.0
 
@@ -76,8 +76,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView = findViewById(R.id.recyclerView)
 
         dataList = mutableListOf()
-        dataID = intent.getStringExtra("userID").toString()
-        Log.d("onCreate of Home",dataID)
+        userID = intent.getStringExtra("userID").toString()
+        Log.d("onCreate of Home",userID)
 
 
         //adapter = CompanyAdapter(dataList)
@@ -143,18 +143,22 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         val id = item.itemId
         if (id == R.id.applied) {
             val intent = Intent(this, Applied::class.java)
+            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         } else if (id == R.id.profile) {
             val intent = Intent(this, Profile::class.java)
+            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         } else if (id == R.id.logout) {
             val intent = Intent(this, Login::class.java)
+            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         } else if (id == R.id.location) {
             val intent = Intent(this, MapsActivity::class.java)
+            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         }
@@ -243,6 +247,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
                         val dataPos = companyObj[position]
                         showDetail(dataPos,position)
+
                         Toast.makeText(this@Home, "Cicked on $position", Toast.LENGTH_SHORT).show()
                     }
                 })
@@ -281,9 +286,10 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         intent.putExtra("companyQualif", company.qualification)
         intent.putExtra("companyBenefit", company.benefit)
         intent.putExtra("companyDuration",company.duration)
-        intent.putExtra("userID",dataID)
+        intent.putExtra("userID",userID)
         Log.d("showdetail()","finished send intent")
         startActivityForResult(intent, DETAIL_REQUEST_CODE)
 
     }
+
 }

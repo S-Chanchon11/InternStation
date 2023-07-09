@@ -113,9 +113,10 @@ class Register : AppCompatActivity() {
 
         var db = dataReference.collection("userData")
         val dataID = db.document().id
+
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
-                db.add(userInfoData)
+        db.add(userInfoData)
             .addOnSuccessListener { result ->
                 Toast.makeText(applicationContext,"Register Successfully",Toast.LENGTH_LONG).show()
             }

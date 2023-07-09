@@ -37,14 +37,18 @@ class DetailActivity : AppCompatActivity() {
         qualification = findViewById(R.id.qualification)
         applyBtn = findViewById(R.id.applyBtn)
         duration = findViewById(R.id.duration)
+        dataReference = FirebaseFirestore.getInstance()
 
         backBtn.setOnClickListener {
             val intent = Intent(this,Home::class.java)
-            startActivity(intent)
+            finish()
         }
 
         applyBtn.setOnClickListener{
-            //submitAppliedData()
+            submitAppliedData()
+            sendID("Applied")
+            val intent = Intent(this,Home::class.java)
+            startActivity(intent)
         }
 
         val companyName = intent.getStringExtra("companyName")
@@ -59,30 +63,39 @@ class DetailActivity : AppCompatActivity() {
         benefit.text = companyBenefit
         val companyDuration = intent.getStringExtra("companyDuration")
         duration.text = companyDuration
-        //val dataID = intent.getStringExtra("userID")
+        val dataID = intent.getStringExtra("userID")
+        userID = dataID.toString()
+        Log.d("onCreate DetailActivity", userID)
 
     }
 
     private fun submitAppliedData(){
-        val id = ""
+        val id = userID
         val nameText = name.text.toString()
         val jobText = jobOf.text.toString()
         val durationText = duration.text.toString()
         val qualificationText = qualification.text.toString()
 
+        if(id.isNullOrBlank()){
+            Toast.makeText(applicationContext,"Please login/register first", Toast.LENGTH_LONG).show()
+            val intent = Intent(this,Login::class.java)
+            startActivity(intent)
+        }
         var db = dataReference.collection("appliedData")
-
         val userAppliedData = AppliedData(id, nameText,
             jobText,durationText,qualificationText)
         db.add(userAppliedData)
             .addOnSuccessListener { result ->
-                Toast.makeText(applicationContext,"Upload Successfully", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"Applied Successfully", Toast.LENGTH_LONG).show()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(applicationContext,"Failed", Toast.LENGTH_SHORT).show()
             }
 
     }
-
+    private fun sendID(jclass:String){
+        val intent = Intent(this, jclass::class.java)
+        intent.putExtra("userID",userID)
+    }
 
 }

@@ -5,62 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.009">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/companyTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/bebas_neue"
-            android:text="Company"
-            android:textColor="@color/navyBlue"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        <include layout="@layout/titlebar" />
 
-        <TextView
-            android:id="@+id/jobOf"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="job"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold|italic" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="187dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="472dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.666"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/durationTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="duration"
-            android:textColor="#4E4E4E"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/qualiTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Qualification"
-            android:textColor="#4E4E4E"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/applied"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#B6B5B5"
-            android:text="APPLIED"
-            android:textSize="14sp"
-            android:textStyle="italic" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
