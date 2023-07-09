@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class Applied : AppCompatActivity() {
 
-    lateinit var backBtn:Button
+    lateinit var backBtn:ImageView
     lateinit var title:TextView
     lateinit var recyclerView: RecyclerView
     lateinit var dataReference: FirebaseFirestore
@@ -35,7 +35,8 @@ class Applied : AppCompatActivity() {
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = linearLayoutManager
-
+        title = findViewById(R.id.titleText)
+        backBtn = findViewById(R.id.backBtn)
         userID = intent.getStringExtra("userID").toString()
         Log.d("APPLIED",userID)
 
