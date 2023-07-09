@@ -36,6 +36,7 @@ class Register : AppCompatActivity() {
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
     private var filename: String = ""
+    lateinit var docID:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +56,24 @@ class Register : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
         filePath = Uri.fromFile(File("storage/emulated/0/Download"))
+
         //open file directory
+        val loadImage = registerForActivityResult(ActivityResultContracts.GetContent()){
+                uri: Uri? ->
+            image.setImageURI(uri)
+            filePath = uri
+            filename = UUID.randomUUID().toString()
+        }
+
+        image.setOnClickListener {
+            loadImage.launch("image/*")
+        }
 
 
         submitBtn.setOnClickListener {
             submitRegisData()
             uploadPDF()
+            uploadImage()
             val intent = Intent(this,Login::class.java)
             startActivity(intent)
         }
@@ -70,7 +83,6 @@ class Register : AppCompatActivity() {
             intent.setType("application/pdf")
             intent.setAction(Intent.ACTION_GET_CONTENT)
             startActivityForResult(Intent.createChooser(intent,"PDF"),11)
-            Log.d("RESULT", "resumeBTN")
         }
 
     }
@@ -113,7 +125,7 @@ class Register : AppCompatActivity() {
 
         var db = dataReference.collection("userData")
         val dataID = db.document().id
-
+        docID = dataID
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
         db.add(userInfoData)
@@ -126,8 +138,8 @@ class Register : AppCompatActivity() {
 
     }
     private fun uploadPDF(){
-        filename = "resume"
-        var mRefrence= storageReference!!.child(filename)
+        filename = docID
+        var mRefrence= storageReference!!.child(filename+"/"+"resume")
         try{
             filePath?.let {
                 mRefrence.putFile(it).addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot? ->
@@ -140,16 +152,34 @@ class Register : AppCompatActivity() {
         }
     }
 
+    private fun uploadImage(){
+        filename = docID
+        if (filePath != null){
+            Toast.makeText(applicationContext, "Uploading...", Toast.LENGTH_SHORT).show()
+
+            val imageRef = storageReference!!.child(filename+"/"+"photo")
+            imageRef.putFile(filePath!!)
+                .addOnSuccessListener {
+                    Toast.makeText(applicationContext, "File uploaded", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener{
+                    Toast.makeText(applicationContext, "Fail to upload", Toast.LENGTH_SHORT).show()
+                }
+                .addOnProgressListener {taskSnapshot ->
+                    val progress = 100.0*taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
+                    Toast.makeText(applicationContext, "Uploaded "+ progress.toInt()+"% " , Toast.LENGTH_SHORT).show()
+                }
+        } else{
+
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==11 && resultCode==RESULT_OK){
             Log.d("RESULT", "result is ok")
             filePath=data!!.data
-
         }
-        Log.d("RESULT", "result is not ok")
-        Log.d("RESULT", requestCode.toString())
-        Log.d("RESULT", resultCode.toString())
     }
 
 }

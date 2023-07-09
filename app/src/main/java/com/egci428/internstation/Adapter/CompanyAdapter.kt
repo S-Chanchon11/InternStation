@@ -12,7 +12,7 @@ import com.egci428.internstation.Data.CompanyData
 
 
 
-class CompanyAdapter (private val companyObject: List<CompanyData>): RecyclerView.Adapter<CompanyViewHolder>(){
+class CompanyAdapter (private val companyObject: List<CompanyData>,val array:ArrayList<String>): RecyclerView.Adapter<CompanyViewHolder>(){
 
     private lateinit var cListener : onItemClickListener
     interface onItemClickListener{
@@ -30,14 +30,15 @@ class CompanyAdapter (private val companyObject: List<CompanyData>): RecyclerVie
         return companyObject.size
     }
     override fun onBindViewHolder(holder: CompanyViewHolder, position: Int) {
-
         holder.txtName.text = companyObject[position].company
         holder.txtJob.text = companyObject[position].job
         holder.txtDuration.text = companyObject[position].duration
         holder.txtQualification.text = companyObject[position].qualification
+        val txtLat = companyObject[position].lat
+        val txtLong = companyObject[position].long
+
+
         Log.d("AdapterHolder", "success")
-
-
     }
 }
 

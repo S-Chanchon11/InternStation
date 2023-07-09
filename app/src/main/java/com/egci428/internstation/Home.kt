@@ -49,22 +49,23 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var drawerLayout: DrawerLayout
     lateinit var recyclerView: RecyclerView
     lateinit var userID:String
-
-    val DETAIL_REQUEST_CODE = 1001
     lateinit var dataReference: FirebaseFirestore
     lateinit var dataList: MutableList<CompanyData>
+    lateinit var distance: Location
+    lateinit var curr: Location
+    lateinit var nearbyArray:ArrayList<String>
+
     private lateinit var mMap: GoogleMap
     //private lateinit var binding: ActivityMapsBinding
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
-
-    val jsonURL =
-        "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
-
     private val client = OkHttpClient()
-
     private var lat: Double = 0.0
     private var lng: Double = 0.0
+
+    val DETAIL_REQUEST_CODE = 1001
+    val jsonURL =
+        "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,9 +77,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView = findViewById(R.id.recyclerView)
 
         dataList = mutableListOf()
+        nearbyArray = ArrayList()
         userID = intent.getStringExtra("userID").toString()
         Log.d("onCreate of Home",userID)
-
 
         //adapter = CompanyAdapter(dataList)
         /*
@@ -95,11 +96,16 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 lng = location.longitude
                 Log.d(
                     "===================",
-                    location.latitude.toString() + location.longitude.toString()
+                    location.latitude.toString() + "," + location.longitude.toString()
+
                 )
             }
+
         }
-        //request_location()
+        val intent = Intent(this,CompanyAdapter::class.java)
+        intent.putStringExtra("location",locationListener.toString())
+
+        request_location()
         dataReference = FirebaseFirestore.getInstance()
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -153,7 +159,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return true
         } else if (id == R.id.logout) {
             val intent = Intent(this, Login::class.java)
-            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         } else if (id == R.id.location) {
@@ -188,7 +193,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return
         }
 
-        locationManager!!.requestLocationUpdates("gps", 1000, 0F, locationListener!!)
+        locationManager!!.requestLocationUpdates("gps", 10000, 0F, locationListener!!)
 
 
     }
@@ -236,11 +241,15 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             override fun onPostExecute(result: String?) {
                 super.onPostExecute(result);
 
+
+
                 var companyObj: List<CompanyData>
                 companyObj = Gson().fromJson<List<CompanyData>>(result,
                     object : TypeToken<List<CompanyData>>() {}.type)
-                var adapter = CompanyAdapter(companyObj)
+                var adapter = CompanyAdapter(companyObj,nearbyArray)
                 recyclerView.adapter = adapter
+
+
 
                 adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener {
                     override fun onItemClick(position: Int) {
