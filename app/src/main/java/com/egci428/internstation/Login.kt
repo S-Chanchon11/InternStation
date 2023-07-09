@@ -62,7 +62,7 @@ class Login : AppCompatActivity() {
                                 Toast.makeText(baseContext, "Login Success", Toast.LENGTH_SHORT).show()
                                 startActivity(intent)
                                 break
-                            }else{
+                            }else if (dataList.equals(dataList.lastIndex)){
                                 Log.d("LOGIN","USERNAME AND PASSWORD IS NOT MATCH")
                                 password.text.clear()
                                 Toast.makeText(baseContext, "Incorrect Username/Password", Toast.LENGTH_LONG).show()

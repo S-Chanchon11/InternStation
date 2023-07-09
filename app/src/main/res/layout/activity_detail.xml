@@ -6,7 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
-    <include layout="@layout/titlebar"/>
+    <include
+        layout="@layout/titlebar"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="59dp" />
+
     <TextView
         android:id="@+id/jobOffer"
         android:layout_width="179dp"
@@ -96,11 +100,33 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Duration"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/jobdes"
-        app:layout_constraintVertical_bias="0.106" />
+        app:layout_constraintTop_toBottomOf="@+id/jobdes" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="64dp"
+        android:text="Resume"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/duration" />
+
+    <Button
+        android:id="@+id/resumeBtn"
+        android:layout_width="240dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="36dp"
+        android:backgroundTint="#2B3467"
+        android:text="Upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/duration" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

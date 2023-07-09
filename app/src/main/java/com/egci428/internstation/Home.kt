@@ -319,7 +319,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             office.longitude = companyObj[i].long
             val distance = curr.distanceTo(office)/1000
             companyObj[i].distance = distance.toDouble()
-
             Log.d("calculateDistance",companyObj[i].company +"     "+ distance.toString())
             i++
         }

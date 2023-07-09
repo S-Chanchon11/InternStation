@@ -27,7 +27,6 @@ class Register : AppCompatActivity() {
     lateinit var fullname: EditText
     lateinit var Dob: EditText
     lateinit var university: EditText
-    lateinit var resumeBtn: Button
     lateinit var password: EditText
     lateinit var repassword: EditText
     lateinit var submitBtn: Button
@@ -47,7 +46,6 @@ class Register : AppCompatActivity() {
         fullname = findViewById(R.id.fullname)
         Dob = findViewById(R.id.DateOfBirth)
         university = findViewById(R.id.university)
-        resumeBtn = findViewById(R.id.button2)
         password = findViewById(R.id.password)
         repassword = findViewById(R.id.password2)
         submitBtn = findViewById(R.id.signupBtn)
@@ -57,34 +55,18 @@ class Register : AppCompatActivity() {
         storageReference = storage!!.reference
         filePath = Uri.fromFile(File("storage/emulated/0/Download"))
 
-        //open file directory
-        val loadImage = registerForActivityResult(ActivityResultContracts.GetContent()){
-                uri: Uri? ->
-            image.setImageURI(uri)
-            filePath = uri
-            filename = UUID.randomUUID().toString()
-        }
-
         image.setOnClickListener {
-            loadImage.launch("image/*")
+            val intentImg = Intent()
+            intentImg.setType("image/*")
+            intentImg.setAction(Intent.ACTION_GET_CONTENT)
+            startActivityForResult(Intent.createChooser(intentImg, "Image"), 12)
         }
-
-
         submitBtn.setOnClickListener {
             submitRegisData()
-            uploadPDF()
             uploadImage()
             val intent = Intent(this,Login::class.java)
             startActivity(intent)
         }
-
-        resumeBtn.setOnClickListener {
-            val intent = Intent()
-            intent.setType("application/pdf")
-            intent.setAction(Intent.ACTION_GET_CONTENT)
-            startActivityForResult(Intent.createChooser(intent,"PDF"),11)
-        }
-
     }
     private fun submitRegisData(){
         val usernameText = username.text.toString()
@@ -137,21 +119,6 @@ class Register : AppCompatActivity() {
             }
 
     }
-    private fun uploadPDF(){
-        filename = docID
-        var mRefrence= storageReference!!.child(filename+"/"+"resume")
-        try{
-            filePath?.let {
-                mRefrence.putFile(it).addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot? ->
-                    Toast.makeText(this,"Successfully uploaded",Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-        catch (e: Exception){
-            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show()
-        }
-    }
-
     private fun uploadImage(){
         filename = docID
         if (filePath != null){
@@ -160,7 +127,7 @@ class Register : AppCompatActivity() {
             val imageRef = storageReference!!.child(filename+"/"+"photo")
             imageRef.putFile(filePath!!)
                 .addOnSuccessListener {
-                    Toast.makeText(applicationContext, "File uploaded", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Image uploaded", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener{
                     Toast.makeText(applicationContext, "Fail to upload", Toast.LENGTH_SHORT).show()
@@ -176,8 +143,8 @@ class Register : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==11 && resultCode==RESULT_OK){
-            Log.d("RESULT", "result is ok")
+        if(requestCode==12 && resultCode== RESULT_OK){
+            Log.d("RESULT IMAGE", "result is ok")
             filePath=data!!.data
         }
     }
