@@ -64,6 +64,7 @@ class Applied : AppCompatActivity() {
 
                         val firebase_username = dataObj.appliedId
                         Log.d("APPLIED",firebase_username)
+
                         if(firebase_username==userID){
 
                             Log.d("APPLIED","ID IS MATCH")
@@ -76,8 +77,8 @@ class Applied : AppCompatActivity() {
 
                             break
                         }else{
-                            Log.d("LOGIN","ID IS NOT MATCH")
-                            Toast.makeText(baseContext, "Incorrect Username/Password", Toast.LENGTH_LONG).show()
+                            Log.d("APPLIED","ID IS NOT MATCH")
+                            Toast.makeText(baseContext, "You need to login/sign-up first", Toast.LENGTH_LONG).show()
                         }
                     }
                     Log.d("LOGIN","END OF GET DATA")

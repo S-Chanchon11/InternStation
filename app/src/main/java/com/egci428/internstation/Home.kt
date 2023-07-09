@@ -11,7 +11,10 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -37,6 +40,8 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.lang.Integer.compare
+import java.util.Collections
 
 import kotlin.random.Random
 
@@ -51,17 +56,18 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var userID:String
     lateinit var dataReference: FirebaseFirestore
     lateinit var dataList: MutableList<CompanyData>
-    lateinit var distance: Location
+    lateinit var office: Location
     lateinit var curr: Location
-    lateinit var nearbyArray:ArrayList<String>
+    lateinit var nearbyArray:ArrayList<Float>
+    var lat:Double=0.0
+    var long:Double=0.0
+
 
     private lateinit var mMap: GoogleMap
     //private lateinit var binding: ActivityMapsBinding
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private val client = OkHttpClient()
-    private var lat: Double = 0.0
-    private var lng: Double = 0.0
 
     val DETAIL_REQUEST_CODE = 1001
     val jsonURL =
@@ -75,6 +81,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         title = findViewById(R.id.titleText)
         navigationView = findViewById(R.id.navigaionView)
         recyclerView = findViewById(R.id.recyclerView)
+        curr = Location("current")
+        office = Location("office")
 
         dataList = mutableListOf()
         nearbyArray = ArrayList()
@@ -93,19 +101,19 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 lat = location.latitude
-                lng = location.longitude
+                long = location.longitude
                 Log.d(
                     "===================",
-                    location.latitude.toString() + "," + location.longitude.toString()
+                    lat.toString() + "," + long.toString()
 
                 )
             }
 
         }
-        val intent = Intent(this,CompanyAdapter::class.java)
-        intent.putStringExtra("location",locationListener.toString())
 
         request_location()
+
+
         dataReference = FirebaseFirestore.getInstance()
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -193,7 +201,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return
         }
 
-        locationManager!!.requestLocationUpdates("gps", 10000, 0F, locationListener!!)
+        locationManager!!.requestLocationUpdates("gps", 50000, 0F, locationListener!!)
 
 
     }
@@ -246,11 +254,12 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 var companyObj: List<CompanyData>
                 companyObj = Gson().fromJson<List<CompanyData>>(result,
                     object : TypeToken<List<CompanyData>>() {}.type)
-                var adapter = CompanyAdapter(companyObj,nearbyArray)
+
+                calculateDistance(companyObj)
+                companyObj = companyObj.sortedBy { it.distance  }
+
+                var adapter = CompanyAdapter(companyObj)
                 recyclerView.adapter = adapter
-
-
-
                 adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener {
                     override fun onItemClick(position: Int) {
 
@@ -262,8 +271,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 })
                 adapter.notifyDataSetChanged()
                 Log.d("Tag", "Load to Adapter")
-
-
             }
 
             override fun doInBackground(vararg params: String): String {
@@ -301,4 +308,25 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
     }
 
+    private fun calculateDistance(companyObj: List<CompanyData>){
+
+        Log.d("============", lat.toString() + "  " + long.toString())
+        curr.latitude = lat
+        curr.longitude = long
+        var i=0
+        while (i<companyObj.size){
+            office.latitude = companyObj[i].lat
+            office.longitude = companyObj[i].long
+            val distance = curr.distanceTo(office)/1000
+            companyObj[i].distance = distance.toDouble()
+
+            Log.d("calculateDistance",companyObj[i].company +"     "+ distance.toString())
+            i++
+        }
+
+
+    }
+
 }
+
+

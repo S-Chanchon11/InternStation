@@ -11,5 +11,6 @@ data class CompanyData (
     val job:String,
     val lat:Double,
     val long:Double,
-    val qualification:String
+    val qualification:String,
+    var distance:Double
     )

@@ -1,6 +1,7 @@
 package com.egci428.internstation
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.egci428.internstation.Data.CompanyData
 
-
-
-class CompanyAdapter (private val companyObject: List<CompanyData>,val array:ArrayList<String>): RecyclerView.Adapter<CompanyViewHolder>(){
+class CompanyAdapter (private var companyObject: List<CompanyData>): RecyclerView.Adapter<CompanyViewHolder>(){
 
     private lateinit var cListener : onItemClickListener
     interface onItemClickListener{
@@ -29,13 +28,13 @@ class CompanyAdapter (private val companyObject: List<CompanyData>,val array:Arr
     override fun getItemCount(): Int {
         return companyObject.size
     }
+
     override fun onBindViewHolder(holder: CompanyViewHolder, position: Int) {
+
         holder.txtName.text = companyObject[position].company
         holder.txtJob.text = companyObject[position].job
         holder.txtDuration.text = companyObject[position].duration
         holder.txtQualification.text = companyObject[position].qualification
-        val txtLat = companyObject[position].lat
-        val txtLong = companyObject[position].long
 
 
         Log.d("AdapterHolder", "success")
