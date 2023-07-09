@@ -17,7 +17,7 @@ import com.google.firebase.storage.UploadTask
 import java.io.File
 
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(){
     lateinit var backBtn:ImageView
     lateinit var titleText:TextView
     lateinit var jobOf:TextView
@@ -34,6 +34,7 @@ class DetailActivity : AppCompatActivity() {
     internal var storageReference: StorageReference? = null
     private  var filePath: Uri? = null
     private var filename: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -47,6 +48,7 @@ class DetailActivity : AppCompatActivity() {
         applyBtn = findViewById(R.id.applyBtn)
         duration = findViewById(R.id.duration)
         resumeBtn = findViewById(R.id.resumeBtn)
+
         dataReference = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
@@ -83,6 +85,7 @@ class DetailActivity : AppCompatActivity() {
         benefit.text = companyBenefit
         val companyDuration = intent.getStringExtra("companyDuration")
         duration.text = companyDuration
+
         val dataID = intent.getStringExtra("userID")
         userID = dataID.toString()
         Log.d("onCreate DetailActivity", userID)

@@ -1,9 +1,12 @@
 package com.egci428.internstation
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -31,6 +34,8 @@ class Register : AppCompatActivity() {
     lateinit var repassword: EditText
     lateinit var submitBtn: Button
     lateinit var image: ImageView
+    lateinit var uploadBtn:Button
+    lateinit var takePic:Button
     private  var filePath: Uri? = null
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
@@ -50,16 +55,22 @@ class Register : AppCompatActivity() {
         repassword = findViewById(R.id.password2)
         submitBtn = findViewById(R.id.signupBtn)
         image = findViewById(R.id.imageView)
-
+        uploadBtn = findViewById(R.id.uploadBtn)
+        takePic = findViewById(R.id.takeapicBtn)
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
-        filePath = Uri.fromFile(File("storage/emulated/0/Download"))
 
-        image.setOnClickListener {
-            val intentImg = Intent()
-            intentImg.setType("image/*")
-            intentImg.setAction(Intent.ACTION_GET_CONTENT)
-            startActivityForResult(Intent.createChooser(intentImg, "Image"), 12)
+
+        val loadImage = registerForActivityResult(ActivityResultContracts.GetContent()){
+                uri: Uri? ->
+            image.setImageURI(uri)
+            filePath = uri
+
+        }
+
+        uploadBtn.setOnClickListener {
+            loadImage.launch("image/*")
+
         }
         submitBtn.setOnClickListener {
             submitRegisData()
@@ -67,6 +78,26 @@ class Register : AppCompatActivity() {
             val intent = Intent(this,Login::class.java)
             startActivity(intent)
         }
+
+
+    }
+    fun takePhoto(view:View){
+        requestCameraPermission.launch(android.Manifest.permission.CAMERA)
+    }
+    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+            isSuccess: Boolean ->
+        if(isSuccess){
+            Log.d("Take Picture", "Permission granted")
+            takePicture.launch(null)
+        } else {
+            Toast.makeText(applicationContext, "Camera has no permission", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicturePreview())
+    {
+            bitmap: Bitmap? ->
+        Log.d("Take Picture", "Show bitmap picture")
+        image.setImageBitmap(bitmap)
     }
     private fun submitRegisData(){
         val usernameText = username.text.toString()
@@ -146,6 +177,7 @@ class Register : AppCompatActivity() {
         if(requestCode==12 && resultCode== RESULT_OK){
             Log.d("RESULT IMAGE", "result is ok")
             filePath=data!!.data
+
         }
     }
 

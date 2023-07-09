@@ -40,9 +40,8 @@ class Profile : AppCompatActivity() {
         userID = intent.getStringExtra("userID").toString()
         Log.d("APPLIED",userID)
         readFirestore()
-        editBtn.setOnClickListener {
 
-        }
+
     }
     private fun readFirestore(){
 

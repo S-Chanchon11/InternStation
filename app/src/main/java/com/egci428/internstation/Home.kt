@@ -88,15 +88,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         nearbyArray = ArrayList()
         userID = intent.getStringExtra("userID").toString()
         Log.d("onCreate of Home",userID)
-
-        //adapter = CompanyAdapter(dataList)
-        /*
-        binding = ActivityMapsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-        */
+        dataReference = FirebaseFirestore.getInstance()
+        navigationView.setNavigationItemSelectedListener(this)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -108,14 +101,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
                 )
             }
-
         }
 
         request_location()
-
-
-        dataReference = FirebaseFirestore.getInstance()
-        navigationView.setNavigationItemSelectedListener(this)
 
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
@@ -129,29 +117,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
     }
 
-/*
-    private fun readFirestore(id:String) {
-        var db = dataReference.collection("userData")
-        db.orderBy("fullname").get()
-            .addOnSuccessListener { snapshot ->
-                if (snapshot != null) {
-                    dataList.clear()
-                    val dataObj = snapshot.toObjects(UserData::class.java)
-                    Log.d("LOGIN", "BEGIN REQUEST DATA")
-                    Log.d("LOGIN", dataObj.toString())
-
-                    for (dataObj in dataObj) {
-
-                        //dataList.add(dataObj)
-
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(applicationContext, "Failed", Toast.LENGTH_SHORT).show()
-            }
-    }
-*/
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
         val id = item.itemId
@@ -167,11 +132,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return true
         } else if (id == R.id.logout) {
             val intent = Intent(this, Login::class.java)
-            startActivity(intent)
-            return true
-        } else if (id == R.id.location) {
-            val intent = Intent(this, MapsActivity::class.java)
-            intent.putExtra("userID",userID)
             startActivity(intent)
             return true
         }
@@ -214,7 +174,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 10) {
             request_location()
-
         } else
             Log.d("Permission result", "Fail")
     }
@@ -302,6 +261,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         intent.putExtra("companyQualif", company.qualification)
         intent.putExtra("companyBenefit", company.benefit)
         intent.putExtra("companyDuration",company.duration)
+        intent.putExtra("companyLat", company.lat)
+        intent.putExtra("companyLong",company.long)
         intent.putExtra("userID",userID)
         Log.d("showdetail()","finished send intent")
         startActivityForResult(intent, DETAIL_REQUEST_CODE)
