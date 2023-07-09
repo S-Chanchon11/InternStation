@@ -38,6 +38,7 @@ class Applied : AppCompatActivity() {
 
         userID = intent.getStringExtra("userID").toString()
         Log.d("APPLIED",userID)
+
         readFirebase()
 
         title.setText("Applied")
