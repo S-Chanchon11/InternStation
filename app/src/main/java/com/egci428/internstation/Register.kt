@@ -2,10 +2,9 @@ package com.egci428.internstation
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -14,14 +13,16 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import com.egci428.internstation.Data.UserData
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
-import okhttp3.internal.concurrent.Task
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.UUID
+import java.io.IOException
+
 
 class Register : AppCompatActivity() {
 
@@ -35,12 +36,16 @@ class Register : AppCompatActivity() {
     lateinit var submitBtn: Button
     lateinit var image: ImageView
     lateinit var uploadBtn:Button
-    lateinit var takePic:Button
     private  var filePath: Uri? = null
+    private  lateinit var photoPath: String
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
     private var filename: String = ""
     lateinit var docID:String
+    private var progress: Double = 0.0
+    lateinit var file: Uri
+    private lateinit var db:CollectionReference
+    private lateinit var dataID:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +61,8 @@ class Register : AppCompatActivity() {
         submitBtn = findViewById(R.id.signupBtn)
         image = findViewById(R.id.imageView)
         uploadBtn = findViewById(R.id.uploadBtn)
-        takePic = findViewById(R.id.takeapicBtn)
+
+        photoPath = "/storage/emulated/0/Download"
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
 
@@ -65,40 +71,28 @@ class Register : AppCompatActivity() {
                 uri: Uri? ->
             image.setImageURI(uri)
             filePath = uri
-
         }
 
         uploadBtn.setOnClickListener {
             loadImage.launch("image/*")
-
         }
         submitBtn.setOnClickListener {
+            db = dataReference.collection("userData")
+            dataID = db.document().id
+            docID = dataID
+            filename = docID
+            filePath?.let { it1 -> uploadImage(it1) }
+
             submitRegisData()
-            uploadImage()
             val intent = Intent(this,Login::class.java)
             startActivity(intent)
         }
 
 
+
     }
-    fun takePhoto(view:View){
-        requestCameraPermission.launch(android.Manifest.permission.CAMERA)
-    }
-    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){
-            isSuccess: Boolean ->
-        if(isSuccess){
-            Log.d("Take Picture", "Permission granted")
-            takePicture.launch(null)
-        } else {
-            Toast.makeText(applicationContext, "Camera has no permission", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicturePreview())
-    {
-            bitmap: Bitmap? ->
-        Log.d("Take Picture", "Show bitmap picture")
-        image.setImageBitmap(bitmap)
-    }
+
+
     private fun submitRegisData(){
         val usernameText = username.text.toString()
         val fullnameText = fullname.text.toString()
@@ -136,9 +130,6 @@ class Register : AppCompatActivity() {
             return
         }
 
-        var db = dataReference.collection("userData")
-        val dataID = db.document().id
-        docID = dataID
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
         db.add(userInfoData)
@@ -149,37 +140,35 @@ class Register : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
             }
 
-    }
-    private fun uploadImage(){
-        filename = docID
-        if (filePath != null){
-            Toast.makeText(applicationContext, "Uploading...", Toast.LENGTH_SHORT).show()
 
+
+
+
+    }
+
+    private fun uploadImage(content:Uri){
+        if (content != null){
+            Toast.makeText(applicationContext, "Uploading...", Toast.LENGTH_SHORT).show()
             val imageRef = storageReference!!.child(filename+"/"+"photo")
-            imageRef.putFile(filePath!!)
+            imageRef.putFile(content!!)
                 .addOnSuccessListener {
                     Toast.makeText(applicationContext, "Image uploaded", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener{
+                    Log.d("URL uploaded", "FAIL TO upload")
                     Toast.makeText(applicationContext, "Fail to upload", Toast.LENGTH_SHORT).show()
                 }
                 .addOnProgressListener {taskSnapshot ->
-                    val progress = 100.0*taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
+                    progress = 100.0*taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
                     Toast.makeText(applicationContext, "Uploaded "+ progress.toInt()+"% " , Toast.LENGTH_SHORT).show()
                 }
+
         } else{
-
+            Log.d("Upload image","filePath is null")
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==12 && resultCode== RESULT_OK){
-            Log.d("RESULT IMAGE", "result is ok")
-            filePath=data!!.data
 
-        }
-    }
 
 }
 

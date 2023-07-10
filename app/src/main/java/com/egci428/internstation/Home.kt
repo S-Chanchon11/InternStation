@@ -4,6 +4,10 @@ package com.egci428.internstation
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -46,7 +50,8 @@ import java.util.Collections
 import kotlin.random.Random
 
 
-class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+    SensorEventListener {
 
     lateinit var dropDown: ImageView
     lateinit var title: TextView
@@ -59,12 +64,14 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var office: Location
     lateinit var curr: Location
     lateinit var nearbyArray:ArrayList<Float>
+    private var sensorManager: SensorManager? = null
+    private var lastUpdate: Long = 0
     var lat:Double=0.0
     var long:Double=0.0
+    lateinit var adapter: CompanyAdapter
 
 
     private lateinit var mMap: GoogleMap
-    //private lateinit var binding: ActivityMapsBinding
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private val client = OkHttpClient()
@@ -84,6 +91,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         curr = Location("current")
         office = Location("office")
 
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        lastUpdate = System.currentTimeMillis()
+
         dataList = mutableListOf()
         nearbyArray = ArrayList()
         userID = intent.getStringExtra("userID").toString()
@@ -102,8 +112,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 )
             }
         }
-
-        request_location()
 
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
@@ -161,7 +169,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return
         }
 
-        locationManager!!.requestLocationUpdates("gps", 50000, 0F, locationListener!!)
+        locationManager!!.requestLocationUpdates("gps", 5000, 0F, locationListener!!)
 
 
     }
@@ -217,7 +225,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 calculateDistance(companyObj)
                 companyObj = companyObj.sortedBy { it.distance  }
 
-                var adapter = CompanyAdapter(companyObj)
+                adapter = CompanyAdapter(companyObj)
                 recyclerView.adapter = adapter
                 adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener {
                     override fun onItemClick(position: Int) {
@@ -285,6 +293,50 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
 
 
+    }
+
+    private fun getAccelerometer(event: SensorEvent){
+
+
+        val values = event.values
+
+        val x = values[0]
+        val y = values[1]
+        val z = values[2]
+
+        val accel = (x*x + y*y +z*z)/(SensorManager.GRAVITY_EARTH*SensorManager.GRAVITY_EARTH)
+        val actualTime = System.currentTimeMillis()
+
+        if(accel >= 1.8){
+            if(actualTime-lastUpdate <200){
+                return
+            }
+            lastUpdate = actualTime
+            request_location()
+            loadJson()
+
+        }
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if(event.sensor.type == Sensor.TYPE_ACCELEROMETER){
+            getAccelerometer(event)
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
+    }
+
+    override fun onPause(){
+        super.onPause()
+        sensorManager!!.unregisterListener(this)
+    }
+
+    override fun onResume(){
+        super.onResume()
+        sensorManager!!.registerListener(this,sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL)
     }
 
 }

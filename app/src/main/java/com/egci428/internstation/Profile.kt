@@ -1,5 +1,6 @@
 package com.egci428.internstation
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.KeyListener
@@ -9,9 +10,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.egci428.internstation.Data.AppliedData
 import com.egci428.internstation.Data.UserData
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class Profile : AppCompatActivity() {
     lateinit var dataReference: FirebaseFirestore
@@ -20,32 +24,27 @@ class Profile : AppCompatActivity() {
     lateinit var ProfileTitle: TextView
     lateinit var Profilepic: ImageView
     lateinit var name: EditText
-    lateinit var editBtn: Button
     lateinit var dataList: MutableList<UserData>
     lateinit var userID:String
+    private  var filePath: Uri? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        //dataReference = FirebaseFirestore.getInstance()
         university = findViewById(R.id.university)
         Dob = findViewById(R.id.Dob)
         ProfileTitle = findViewById(R.id.profileTitle)
-        Profilepic = findViewById(R.id.profilePic)
         name = findViewById(R.id.nameTxt)
-        editBtn = findViewById(R.id.editBtn)
         dataReference = FirebaseFirestore.getInstance()
         dataList = mutableListOf()
-
         userID = intent.getStringExtra("userID").toString()
         Log.d("APPLIED",userID)
+
         readFirestore()
-
-
     }
     private fun readFirestore(){
-
-
         var db = dataReference.collection("userData")
         db.orderBy("fullname").get()
             .addOnSuccessListener { snapshot ->
@@ -68,7 +67,6 @@ class Profile : AppCompatActivity() {
                             Dob.setText(dataObj.Dob)
 
                             Toast.makeText(baseContext, "Get userID success", Toast.LENGTH_SHORT).show()
-
                             break
                         }else{
                             Log.d("LOGIN","ID IS NOT MATCH")
