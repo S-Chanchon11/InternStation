@@ -19,6 +19,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -50,7 +51,7 @@ import java.util.Collections
 import kotlin.random.Random
 
 
-class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
+class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     SensorEventListener {
 
     lateinit var dropDown: ImageView
@@ -66,12 +67,11 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var nearbyArray:ArrayList<Float>
     private var sensorManager: SensorManager? = null
     private var lastUpdate: Long = 0
-    var lat:Double=0.0
-    var long:Double=0.0
+    lateinit var syncBtn: ImageView
+    var lat:Double=13.0
+    var long:Double=100.0
     lateinit var adapter: CompanyAdapter
 
-
-    private lateinit var mMap: GoogleMap
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private val client = OkHttpClient()
@@ -88,6 +88,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         title = findViewById(R.id.titleText)
         navigationView = findViewById(R.id.navigaionView)
         recyclerView = findViewById(R.id.recyclerView)
+        syncBtn = findViewById(R.id.syncBtn)
         curr = Location("current")
         office = Location("office")
 
@@ -99,19 +100,21 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         userID = intent.getStringExtra("userID").toString()
         Log.d("onCreate of Home",userID)
         dataReference = FirebaseFirestore.getInstance()
+
         navigationView.setNavigationItemSelectedListener(this)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 lat = location.latitude
                 long = location.longitude
                 Log.d(
-                    "===================",
+                    "Location == ",
                     lat.toString() + "," + long.toString()
-
                 )
             }
         }
+        request_location()
 
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
@@ -122,6 +125,11 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
         dropDown.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        syncBtn.setOnClickListener {
+            loadJson()
+
         }
     }
 
@@ -186,24 +194,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             Log.d("Permission result", "Fail")
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        //mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-
-        /*
-        marker.setOnClickListener {
-            val cur = LatLng(lat,lng)
-            mMap.addMarker(MarkerOptions().position(cur).title("Marker at Current Location"))
-            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cur,8F))
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cur,8F))
-        }
-
-         */
-    }
 
     private fun loadJson() {
 
@@ -215,8 +206,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
             override fun onPostExecute(result: String?) {
                 super.onPostExecute(result);
-
-
 
                 var companyObj: List<CompanyData>
                 companyObj = Gson().fromJson<List<CompanyData>>(result,
@@ -273,8 +262,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         intent.putExtra("companyLong",company.long)
         intent.putExtra("userID",userID)
         Log.d("showdetail()","finished send intent")
-        startActivityForResult(intent, DETAIL_REQUEST_CODE)
-
+        setResult(RESULT_OK,intent)
+        finish()
     }
 
     private fun calculateDistance(companyObj: List<CompanyData>){
@@ -312,7 +301,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 return
             }
             lastUpdate = actualTime
-            request_location()
+
             loadJson()
 
         }

@@ -1,5 +1,6 @@
 package com.egci428.internstation
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -55,14 +56,12 @@ class DetailActivity : AppCompatActivity(){
         filePath = Uri.fromFile(File("storage/emulated/0/Download"))
 
         backBtn.setOnClickListener {
-            val intent = Intent(this,Home::class.java)
-            startActivity(intent)
+            sendID("Home")
         }
 
         applyBtn.setOnClickListener{
             submitAppliedData()
             uploadPDF()
-            sendID("Applied")
             finish()
         }
 
@@ -88,7 +87,6 @@ class DetailActivity : AppCompatActivity(){
 
         val dataID = intent.getStringExtra("userID")
         userID = dataID.toString()
-        Log.d("onCreate DetailActivity", userID)
 
     }
 
@@ -98,7 +96,7 @@ class DetailActivity : AppCompatActivity(){
         val jobText = jobOf.text.toString()
         val durationText = duration.text.toString()
         val qualificationText = qualification.text.toString()
-
+        Log.d("RECEIVE USER ID",id)
         if(id.isNullOrBlank()){
             Toast.makeText(applicationContext,"Please login/register first", Toast.LENGTH_LONG).show()
             val intent = Intent(this,Login::class.java)
@@ -118,7 +116,9 @@ class DetailActivity : AppCompatActivity(){
     }
     private fun sendID(jclass:String){
         val intent = Intent(this, jclass::class.java)
+        Log.d("sendID",userID)
         intent.putExtra("userID",userID)
+        startActivity(intent)
     }
     private fun uploadPDF(){
         filename = userID
@@ -139,7 +139,12 @@ class DetailActivity : AppCompatActivity(){
         if(requestCode==11 && resultCode==RESULT_OK){
             Log.d("RESULT PDF", "result is ok")
             filePath=data!!.data
+        } else if(requestCode==1001){
+
+            Log.d("onCreate DetailActivity", userID)
+
         }
+
     }
 
 }

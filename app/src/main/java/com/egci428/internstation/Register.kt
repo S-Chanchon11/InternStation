@@ -37,13 +37,11 @@ class Register : AppCompatActivity() {
     lateinit var image: ImageView
     lateinit var uploadBtn:Button
     private  var filePath: Uri? = null
-    private  lateinit var photoPath: String
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
     private var filename: String = ""
     lateinit var docID:String
     private var progress: Double = 0.0
-    lateinit var file: Uri
     private lateinit var db:CollectionReference
     private lateinit var dataID:String
 
@@ -62,7 +60,7 @@ class Register : AppCompatActivity() {
         image = findViewById(R.id.imageView)
         uploadBtn = findViewById(R.id.uploadBtn)
 
-        photoPath = "/storage/emulated/0/Download"
+
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
 
@@ -139,13 +137,7 @@ class Register : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
             }
-
-
-
-
-
     }
-
     private fun uploadImage(content:Uri){
         if (content != null){
             Toast.makeText(applicationContext, "Uploading...", Toast.LENGTH_SHORT).show()
@@ -162,7 +154,6 @@ class Register : AppCompatActivity() {
                     progress = 100.0*taskSnapshot.bytesTransferred/taskSnapshot.totalByteCount
                     Toast.makeText(applicationContext, "Uploaded "+ progress.toInt()+"% " , Toast.LENGTH_SHORT).show()
                 }
-
         } else{
             Log.d("Upload image","filePath is null")
         }

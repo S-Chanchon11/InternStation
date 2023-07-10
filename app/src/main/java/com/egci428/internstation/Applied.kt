@@ -45,6 +45,7 @@ class Applied : AppCompatActivity() {
         title.setText("Applied")
         backBtn.setOnClickListener{
             val intent = Intent(this,Home::class.java)
+            sendID("Home")
             startActivity(intent)
         }
     }
@@ -87,6 +88,12 @@ class Applied : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(applicationContext,"Failed", Toast.LENGTH_SHORT).show()
             }
+    }
+    private fun sendID(jclass:String){
+        val intent = Intent(this, jclass::class.java)
+        Log.d("sendID",userID)
+        intent.putExtra("userID",userID)
+        startActivity(intent)
     }
 
 }

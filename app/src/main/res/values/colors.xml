@@ -2,8 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="navyBlue">#2B3467</color>
-    <color name="roseRed">#EB455F</color>
-    <color name="lightBlue">#BAD7E9</color>
+    <color name="Nblue">#2B3467</color>
+    <color name="rosered">#EB455F</color>
+    <color name="Lblue">#BAD7E9</color>
     <color name="cream">#FCFFE7</color>
+    <color name="skyblue">#CAEEEF</color>
 </resources>

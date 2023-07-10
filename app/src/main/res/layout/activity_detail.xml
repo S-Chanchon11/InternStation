@@ -2,23 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/skyblue"
     tools:context=".DetailActivity">
 
     <include
         layout="@layout/titlebar"
-        tools:layout_editor_absoluteX="32dp"
-        tools:layout_editor_absoluteY="53dp" />
+        android:layout_width="410dp"
+        android:layout_height="84dp" />
 
     <TextView
         android:id="@+id/jobOffer"
         android:layout_width="179dp"
-        android:layout_height="19dp"
+        android:layout_height="27dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
+        android:fontFamily="@font/benchnine"
         android:text="Job"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/qualification"
         app:layout_constraintHorizontal_bias="0.0"
@@ -30,12 +32,12 @@
         android:layout_width="226dp"
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="92dp"
         android:layout_marginEnd="337dp"
         android:fontFamily="@font/bebas_neue"
         android:text="Company"
-        android:textColor="@color/navyBlue"
-        android:textSize="22sp"
+        android:textColor="@color/Nblue"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -44,36 +46,41 @@
 
     <TextView
         android:id="@+id/jobdes"
-        android:layout_width="362dp"
-        android:layout_height="76dp"
+        android:layout_width="254dp"
+        android:layout_height="72dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
+        android:fontFamily="@font/benchnine"
         android:text="Job-Des"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintHorizontal_bias="0.056"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/benefit" />
 
     <TextView
         android:id="@+id/benefit"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
+        android:layout_width="245dp"
+        android:layout_height="31dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/benchnine"
         android:text="Benefit"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/applyBtn"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/jobOffer" />
 
     <TextView
         android:id="@+id/qualification"
-        android:layout_width="80dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="36dp"
+        android:layout_width="103dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="132dp"
+        android:layout_marginEnd="20dp"
+        android:fontFamily="@font/benchnine"
         android:text="Qualification"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -82,17 +89,29 @@
         android:id="@+id/applyBtn"
         android:layout_width="90dp"
         android:layout_height="34dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="448dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="436dp"
         android:backgroundTint="#2B3467"
         android:fontFamily="@font/bebas_neue"
         android:text="Apply ➜"
         android:textSize="11sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/resumeBtn"
+        android:layout_width="90dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="#2B3467"
+        android:fontFamily="@font/bebas_neue"
+        android:text="Resume ➜"
+        android:textSize="11sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/applyBtn"
         app:layout_constraintTop_toBottomOf="@+id/qualification"
-        app:layout_constraintVertical_bias="0.185" />
+        tools:layout_editor_absoluteX="301dp" />
 
     <TextView
         android:id="@+id/duration"
@@ -101,36 +120,14 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:fontFamily="@font/benchnine"
         android:text="Duration"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/jobdes" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:text="Resume"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/duration" />
-
-    <Button
-        android:id="@+id/resumeBtn"
-        android:layout_width="240dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="36dp"
-        android:backgroundTint="#2B3467"
-        android:text="Upload"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/duration" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/jobdes"
+        app:layout_constraintVertical_bias="0.004" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

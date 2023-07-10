@@ -22,13 +22,9 @@ class Profile : AppCompatActivity() {
     lateinit var university: TextView
     lateinit var Dob: TextView
     lateinit var ProfileTitle: TextView
-    lateinit var Profilepic: ImageView
     lateinit var name: EditText
     lateinit var dataList: MutableList<UserData>
     lateinit var userID:String
-    private  var filePath: Uri? = null
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
