@@ -79,7 +79,7 @@ class Applied : AppCompatActivity() {
                             Toast.makeText(baseContext, "Get userID success", Toast.LENGTH_SHORT).show()
 
                             break
-                        }else{
+                        }else if(dataList.lastIndex==dataList.size){
                             Log.d("APPLIED","ID IS NOT MATCH")
                             Toast.makeText(baseContext, "You need to login/sign-up first", Toast.LENGTH_LONG).show()
                         }
@@ -91,11 +91,6 @@ class Applied : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Failed", Toast.LENGTH_SHORT).show()
             }
     }
-    private fun sendID(jclass:String){
-        val intent = Intent(this, jclass::class.java)
-        Log.d("sendID",userID)
-        intent.putExtra("userID",userID)
-        startActivity(intent)
-    }
+
 
 }

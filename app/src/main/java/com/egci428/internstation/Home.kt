@@ -34,8 +34,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.egci428.internstation.Data.CompanyData
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.navigation.NavigationView
@@ -51,10 +50,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.lang.Integer.compare
-import java.util.Collections
-
-import kotlin.random.Random
 
 
 class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
@@ -180,29 +175,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         return false
     }
 
-    private fun checkPer(){
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                //requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET), 10)
-                requestPermissions(
-                    arrayOf(
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION
-                    ), 10
-                )
-            }
-            return
-        }
-    }
+
     private fun request_location() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -226,7 +199,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             return
         }
 
-        locationManager!!.requestLocationUpdates("gps", 5000, 0F, locationListener!!)
+        locationManager!!.requestLocationUpdates("gps", 15000, 0F, locationListener!!)
         Log.d("Location requested",lat.toString())
 
     }
