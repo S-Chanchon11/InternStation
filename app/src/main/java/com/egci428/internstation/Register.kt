@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.egci428.internstation.Data.ImageData
 import com.egci428.internstation.Data.UserData
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -122,23 +123,7 @@ class Register : AppCompatActivity() {
             return
         }
 
-        var flg=0
-        if(MonthText.equals("0") || MonthText> 12.toString()){
-            month.error = "Wrong input"
-            return
-        } else if(MonthText.equals("1") || MonthText.equals("3")
-            || MonthText.equals("5") || MonthText.equals("7")
-            || MonthText.equals("8") || MonthText.equals("10")
-            || MonthText.equals("12")){
-            flg=1
-        }
 
-        if(flg==1){
-            return
-        }else if(flg==0){
-            date.error  = "Wrong input"
-            return
-        }
 
         if(passwordText!=repasswordText){
             password.error = "Password does not match"
@@ -148,9 +133,11 @@ class Register : AppCompatActivity() {
             repassword.text.clear()
             return
         }
-        var DobText = DateText+"/"+MonthText+"+"+YearText
+        var DobText = DateText+"/"+MonthText+"/"+YearText
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
+
+
         db.add(userInfoData)
             .addOnSuccessListener { result ->
                 Toast.makeText(applicationContext,"Register Successfully",Toast.LENGTH_LONG).show()
@@ -165,6 +152,22 @@ class Register : AppCompatActivity() {
             val imageRef = storageReference!!.child(filename+"/"+"photo")
             imageRef.putFile(content!!)
                 .addOnSuccessListener {
+                    imageRef.downloadUrl.addOnSuccessListener {
+                        val uri = it.toString()
+                        Log.d("image uri", uri)
+
+                        db = dataReference.collection("imageData")
+
+                        val userImageData = ImageData(dataID, uri)
+                        db.add(userImageData)
+                            .addOnSuccessListener { result ->
+                                Toast.makeText(applicationContext,"Image uri Successfully",Toast.LENGTH_LONG).show()
+                            }
+                            .addOnFailureListener { exception ->
+                                Toast.makeText(applicationContext,"Failed",Toast.LENGTH_SHORT).show()
+                            }
+
+                    }
                     Toast.makeText(applicationContext, "Image uploaded", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener{
