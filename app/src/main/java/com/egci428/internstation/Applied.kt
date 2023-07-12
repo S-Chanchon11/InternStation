@@ -25,12 +25,14 @@ class Applied : AppCompatActivity() {
     lateinit var dataReference: FirebaseFirestore
     lateinit var dataList: MutableList<AppliedData>
     lateinit var userID:String
+    lateinit var appliedList: MutableList<AppliedData>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_applied)
 
         dataReference = FirebaseFirestore.getInstance()
         dataList = mutableListOf()
+        appliedList = mutableListOf()
         recyclerView = findViewById(R.id.recyclerView)
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
@@ -63,13 +65,13 @@ class Applied : AppCompatActivity() {
                     Log.d("APPLIED","BEGIN REQUEST DATA")
 
                     for(dataObj in appliedObj){
-                        dataList.add(dataObj)
+
 
                         val firebase_username = dataObj.appliedId
                         Log.d("APPLIED",firebase_username)
 
                         if(firebase_username==userID){
-
+                            dataList.add(dataObj)
                             Log.d("APPLIED","ID IS MATCH")
                             var adapter = AppliedAdapter(dataList)
                             recyclerView.adapter = adapter
@@ -78,9 +80,8 @@ class Applied : AppCompatActivity() {
 
                             Toast.makeText(baseContext, "Get userID success", Toast.LENGTH_SHORT).show()
 
-                            break
-                        }else if(dataList.lastIndex==dataList.size){
-                            Log.d("APPLIED","ID IS NOT MATCH")
+                        }else if(appliedObj.lastIndex==appliedObj.size){
+                            Log.d("APPLIED","You need to login/sign-up first")
                             Toast.makeText(baseContext, "You need to login/sign-up first", Toast.LENGTH_LONG).show()
                         }
                     }

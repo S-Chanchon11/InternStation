@@ -89,6 +89,7 @@
         android:id="@+id/applyBtn"
         android:layout_width="90dp"
         android:layout_height="34dp"
+        android:layout_marginStart="31dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="436dp"
         android:backgroundTint="#2B3467"
@@ -97,7 +98,8 @@
         android:textSize="11sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/jobdes" />
 
     <Button
         android:id="@+id/resumeBtn"
@@ -110,8 +112,9 @@
         android:textSize="11sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toTopOf="@+id/applyBtn"
-        app:layout_constraintTop_toBottomOf="@+id/qualification"
-        tools:layout_editor_absoluteX="301dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/jobdes"
+        app:layout_constraintTop_toBottomOf="@+id/qualification" />
 
     <TextView
         android:id="@+id/duration"
