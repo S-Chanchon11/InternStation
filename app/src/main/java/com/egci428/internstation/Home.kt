@@ -99,8 +99,10 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         recyclerView = findViewById(R.id.recyclerView)
         syncBtn = findViewById(R.id.syncBtn)
         dataReference = FirebaseFirestore.getInstance()
+
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         lastUpdate = System.currentTimeMillis()
+
         navigationView.setNavigationItemSelectedListener(this)
         title.setText("Main Menu")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager

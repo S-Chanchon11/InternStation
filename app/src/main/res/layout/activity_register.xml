@@ -14,6 +14,7 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="confirm password"
+        android:background="@drawable/border_text"
         android:inputType="textPassword"
         android:password="true"
         android:textSize="14sp"
@@ -112,16 +113,16 @@
         android:id="@+id/university"
         android:layout_width="348dp"
         android:layout_height="45dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/border_text"
         android:ems="10"
         android:hint="University"
         android:inputType="text"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DateOfBirth" />
+        app:layout_constraintTop_toBottomOf="@+id/Month" />
 
     <TextView
         android:id="@+id/textView"
@@ -157,17 +158,68 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/DateOfBirth"
-        android:layout_width="204dp"
-        android:layout_height="33dp"
+        android:id="@+id/Date"
+        android:layout_width="47dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="28dp"
         android:background="@drawable/border_text"
         android:ems="10"
-        android:inputType="date"
+        android:hint="Date"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/fullname" />
+
+    <EditText
+        android:id="@+id/Month"
+        android:layout_width="47dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/border_text"
+        android:ems="10"
+        android:hint="Month"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/fullname" />
+
+    <EditText
+        android:id="@+id/Year"
+        android:layout_width="47dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/border_text"
+        android:ems="10"
+        android:hint="Year"
+        android:inputType="number"
+        android:textAlignment="center"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.411"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/fullname" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/university"
+        app:layout_constraintStart_toEndOf="@+id/Date"
+        app:layout_constraintTop_toBottomOf="@+id/fullname" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/university"
+        app:layout_constraintStart_toEndOf="@+id/Month"
         app:layout_constraintTop_toBottomOf="@+id/fullname" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,9 @@
 package com.egci428.internstation
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,9 +15,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
+import java.time.Month
 
 
 class Register : AppCompatActivity() {
@@ -29,7 +23,7 @@ class Register : AppCompatActivity() {
     lateinit var dataReference:FirebaseFirestore
     lateinit var username: EditText
     lateinit var fullname: EditText
-    lateinit var Dob: EditText
+
     lateinit var university: EditText
     lateinit var password: EditText
     lateinit var repassword: EditText
@@ -44,6 +38,10 @@ class Register : AppCompatActivity() {
     private var progress: Double = 0.0
     private lateinit var db:CollectionReference
     private lateinit var dataID:String
+    lateinit var date : EditText
+    lateinit var month : EditText
+    lateinit var year : EditText
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +50,9 @@ class Register : AppCompatActivity() {
         dataReference = FirebaseFirestore.getInstance()
         username = findViewById(R.id.username)
         fullname = findViewById(R.id.fullname)
-        Dob = findViewById(R.id.DateOfBirth)
+        date = findViewById(R.id.Date)
+        month = findViewById(R.id.Month)
+        year = findViewById(R.id.Year)
         university = findViewById(R.id.university)
         password = findViewById(R.id.password)
         repassword = findViewById(R.id.password2)
@@ -94,7 +94,9 @@ class Register : AppCompatActivity() {
     private fun submitRegisData(){
         val usernameText = username.text.toString()
         val fullnameText = fullname.text.toString()
-        val DobText = Dob.text.toString()
+        val DateText = date.text.toString()
+        val MonthText = month.text.toString()
+        val YearText = year.text.toString()
         val universityText = university.text.toString()
         val passwordText = password.text.toString()
         val repasswordText = repassword.text.toString()
@@ -119,6 +121,25 @@ class Register : AppCompatActivity() {
                             repassword.error = "Please enter your password again"
             return
         }
+
+        var flg=0
+        if(MonthText.equals("0") || MonthText> 12.toString()){
+            month.error = "Wrong input"
+            return
+        } else if(MonthText.equals("1") || MonthText.equals("3")
+            || MonthText.equals("5") || MonthText.equals("7")
+            || MonthText.equals("8") || MonthText.equals("10")
+            || MonthText.equals("12")){
+            flg=1
+        }
+
+        if(flg==1){
+            return
+        }else if(flg==0){
+            date.error  = "Wrong input"
+            return
+        }
+
         if(passwordText!=repasswordText){
             password.error = "Password does not match"
             repassword.error = "Password does not match"
@@ -127,7 +148,7 @@ class Register : AppCompatActivity() {
             repassword.text.clear()
             return
         }
-
+        var DobText = DateText+"/"+MonthText+"+"+YearText
         val userInfoData = UserData(dataID, usernameText,
             passwordText,fullnameText,DobText,universityText)
         db.add(userInfoData)
