@@ -49,6 +49,7 @@ class Applied : AppCompatActivity() {
             intent.putExtra("userID", userID)
             startActivity(intent)
         }
+
     }
     private fun readFirebase(){
 

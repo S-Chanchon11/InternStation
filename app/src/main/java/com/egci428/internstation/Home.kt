@@ -78,7 +78,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     var lat: Double = 0.0
     var long:Double = 0.0
     lateinit var adapter: CompanyAdapter
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
