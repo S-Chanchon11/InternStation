@@ -12,6 +12,7 @@
         android:layout_height="match_parent">
 
         <include
+            android:id="@+id/include"
             layout="@layout/titlebar"
             android:layout_width="419dp"
             android:layout_height="745dp"
@@ -20,18 +21,16 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="340dp"
-            android:layout_height="589dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="36dp"
-            android:layout_marginBottom="36dp"
+            android:layout_width="384dp"
+            android:layout_height="629dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Calendar"
-            app:layout_constraintVertical_bias="0.363" />
+            app:layout_constraintTop_toTopOf="@+id/include"
+            app:layout_constraintVertical_bias="0.843" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

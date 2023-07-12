@@ -1,6 +1,8 @@
 package com.egci428.internstation
 
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,15 +23,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.egci428.internstation.Data.CompanyData
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.material.navigation.NavigationView
@@ -68,68 +74,88 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     private var sensorManager: SensorManager? = null
     private var lastUpdate: Long = 0
     lateinit var syncBtn: ImageView
-    var lat:Double=13.0
-    var long:Double=100.0
+    lateinit var progressBar : ProgressBar
+    var lat: Double = 0.0
+    var long:Double = 0.0
     lateinit var adapter: CompanyAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private val client = OkHttpClient()
 
-    val DETAIL_REQUEST_CODE = 1001
+    private var progress = 0
+
     val jsonURL =
         "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        dataList = mutableListOf()
+        nearbyArray = ArrayList()
+        progressBar = findViewById(R.id.progressBar)
         dropDown = findViewById(R.id.imageView)
         drawerLayout = findViewById(R.id.drawerLayout)
         title = findViewById(R.id.titleText)
         navigationView = findViewById(R.id.navigaionView)
         recyclerView = findViewById(R.id.recyclerView)
         syncBtn = findViewById(R.id.syncBtn)
-        curr = Location("current")
-        office = Location("office")
-
+        dataReference = FirebaseFirestore.getInstance()
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         lastUpdate = System.currentTimeMillis()
-
-        dataList = mutableListOf()
-        nearbyArray = ArrayList()
-        userID = intent.getStringExtra("userID").toString()
-        Log.d("onCreate of Home",userID)
-        dataReference = FirebaseFirestore.getInstance()
-
         navigationView.setNavigationItemSelectedListener(this)
+        title.setText("Main Menu")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+        val linearLayoutManager =
+            LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = linearLayoutManager
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 lat = location.latitude
                 long = location.longitude
                 Log.d(
-                    "Location == ",
+                    "Location in listener ",
                     lat.toString() + "," + long.toString()
                 )
+
+                if(progressBar.visibility==0){
+                    loadJson()
+                }
+                progressBar.setVisibility(View.INVISIBLE)
+
             }
         }
-        request_location()
+        progressBar.setVisibility(View.VISIBLE)
 
-        val linearLayoutManager =
-            LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
-        recyclerView.layoutManager = linearLayoutManager
-        loadJson()
+        if(lat==0.0&&long==0.0){
+            request_location()
+        }
 
-        title.setText("Main Menu")
+
+
+        curr = Location("current")
+        office = Location("office")
+
+        userID = intent.getStringExtra("userID").toString()
+        Log.d("onCreate of Home",userID)
+
 
         dropDown.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
         syncBtn.setOnClickListener {
+            request_location()
             loadJson()
 
+        }
+
+        if(userID.isNullOrEmpty()){
+            userID = intent.getStringExtra("userID").toString()
+            Log.d("userID is null",userID)
         }
     }
 
@@ -154,6 +180,29 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         return false
     }
 
+    private fun checkPer(){
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                //requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET), 10)
+                requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ), 10
+                )
+            }
+            return
+        }
+    }
     private fun request_location() {
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -178,7 +227,7 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         }
 
         locationManager!!.requestLocationUpdates("gps", 5000, 0F, locationListener!!)
-
+        Log.d("Location requested",lat.toString())
 
     }
 
@@ -194,10 +243,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             Log.d("Permission result", "Fail")
     }
 
-
-
     private fun loadJson() {
-
+        Log.d("Tag", "loadJson")
         val loadJsonAsync = object : AsyncTask<String, String, String>() {
 
             override fun onPreExecute() {
@@ -262,15 +309,15 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         intent.putExtra("companyLong",company.long)
         intent.putExtra("userID",userID)
         Log.d("showdetail()","finished send intent")
-        setResult(RESULT_OK,intent)
-        finish()
+        setResult(Activity.RESULT_OK,intent)
+        startActivityForResult(intent,101)
     }
 
     private fun calculateDistance(companyObj: List<CompanyData>){
 
         Log.d("============", lat.toString() + "  " + long.toString())
-        curr.latitude = lat
-        curr.longitude = long
+        curr.latitude = lat!!.toDouble()
+        curr.longitude = long!!.toDouble()
         var i=0
         while (i<companyObj.size){
             office.latitude = companyObj[i].lat

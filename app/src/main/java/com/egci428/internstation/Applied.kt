@@ -37,6 +37,7 @@ class Applied : AppCompatActivity() {
         recyclerView.layoutManager = linearLayoutManager
         title = findViewById(R.id.titleText)
         backBtn = findViewById(R.id.backBtn)
+
         userID = intent.getStringExtra("userID").toString()
         Log.d("APPLIED",userID)
 
@@ -45,7 +46,7 @@ class Applied : AppCompatActivity() {
         title.setText("Applied")
         backBtn.setOnClickListener{
             val intent = Intent(this,Home::class.java)
-            sendID("Home")
+            intent.putExtra("userID", userID)
             startActivity(intent)
         }
     }

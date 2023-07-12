@@ -55,8 +55,12 @@ class DetailActivity : AppCompatActivity(){
         storageReference = storage!!.reference
         filePath = Uri.fromFile(File("storage/emulated/0/Download"))
 
+        Log.d("DETAIL ACTIVITY","DETAIL")
+
         backBtn.setOnClickListener {
-            sendID("Home")
+            val intent = Intent(this,Home::class.java)
+            intent.putExtra("userID", userID)
+            startActivity(intent)
         }
 
         applyBtn.setOnClickListener{
@@ -72,20 +76,21 @@ class DetailActivity : AppCompatActivity(){
             startActivityForResult(Intent.createChooser(intentPdf,"PDF"),11)
         }
 
-        val companyName = intent.getStringExtra("companyName")
+
+        var companyName = intent.getStringExtra("companyName")
         name.text = companyName
-        val companyDes = intent.getStringExtra("companyDes")
+        var companyDes = intent.getStringExtra("companyDes")
         jobDescription.text = companyDes
-        val companyQualif = intent.getStringExtra("companyQualif")
+        var companyQualif = intent.getStringExtra("companyQualif")
         qualification.text = companyQualif
-        val jobOffer = intent.getStringExtra("jobOffer")
+        var jobOffer = intent.getStringExtra("jobOffer")
         jobOf.text = jobOffer
-        val companyBenefit = intent.getStringExtra("companyBenefit")
+        var companyBenefit = intent.getStringExtra("companyBenefit")
         benefit.text = companyBenefit
-        val companyDuration = intent.getStringExtra("companyDuration")
+        var companyDuration = intent.getStringExtra("companyDuration")
         duration.text = companyDuration
 
-        val dataID = intent.getStringExtra("userID")
+        var dataID = intent.getStringExtra("userID")
         userID = dataID.toString()
 
     }
@@ -114,12 +119,7 @@ class DetailActivity : AppCompatActivity(){
             }
 
     }
-    private fun sendID(jclass:String){
-        val intent = Intent(this, jclass::class.java)
-        Log.d("sendID",userID)
-        intent.putExtra("userID",userID)
-        startActivity(intent)
-    }
+
     private fun uploadPDF(){
         filename = userID
         var mRefrence= storageReference!!.child(filename+"/"+"resume")
@@ -136,12 +136,19 @@ class DetailActivity : AppCompatActivity(){
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==11 && resultCode==RESULT_OK){
+
+        Log.d("onActivity", requestCode.toString() + resultCode.toString())
+
+        if(requestCode==11 && resultCode==Activity.RESULT_OK){
             Log.d("RESULT PDF", "result is ok")
             filePath=data!!.data
         } else if(requestCode==1001){
 
             Log.d("onCreate DetailActivity", userID)
+
+        } else if (resultCode==Activity.RESULT_OK){
+            Log.d("RESULT DETAIL",  resultCode.toString())
+            Log.d("RESULT DETAIL", "INTENT IS OKAY")
 
         }
 
