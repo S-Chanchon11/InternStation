@@ -20,7 +20,6 @@ import java.io.File
 
 class DetailActivity : AppCompatActivity(){
     lateinit var backBtn:ImageView
-    lateinit var titleText:TextView
     lateinit var jobOf:TextView
     lateinit var name:TextView
     lateinit var jobDescription:TextView
@@ -31,6 +30,7 @@ class DetailActivity : AppCompatActivity(){
     lateinit var userID:String
     lateinit var dataReference: FirebaseFirestore
     lateinit var resumeBtn: Button
+    lateinit var title:TextView
     internal var storage: FirebaseStorage? = null
     internal var storageReference: StorageReference? = null
     private  var filePath: Uri? = null
@@ -49,7 +49,7 @@ class DetailActivity : AppCompatActivity(){
         applyBtn = findViewById(R.id.applyBtn)
         duration = findViewById(R.id.duration)
         resumeBtn = findViewById(R.id.resumeBtn)
-
+        title = findViewById(R.id.titleText)
         dataReference = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         storageReference = storage!!.reference
@@ -79,6 +79,7 @@ class DetailActivity : AppCompatActivity(){
 
         var companyName = intent.getStringExtra("companyName")
         name.text = companyName
+        title.text = companyName
         var companyDes = intent.getStringExtra("companyDes")
         jobDescription.text = companyDes
         var companyQualif = intent.getStringExtra("companyQualif")

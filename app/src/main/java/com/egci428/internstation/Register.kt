@@ -24,24 +24,28 @@ class Register : AppCompatActivity() {
     lateinit var dataReference:FirebaseFirestore
     lateinit var username: EditText
     lateinit var fullname: EditText
-
     lateinit var university: EditText
     lateinit var password: EditText
     lateinit var repassword: EditText
     lateinit var submitBtn: Button
     lateinit var image: ImageView
     lateinit var uploadBtn:Button
-    private  var filePath: Uri? = null
-    internal var storage: FirebaseStorage? = null
-    internal var storageReference: StorageReference? = null
-    private var filename: String = ""
     lateinit var docID:String
-    private var progress: Double = 0.0
-    private lateinit var db:CollectionReference
-    private lateinit var dataID:String
     lateinit var date : EditText
     lateinit var month : EditText
     lateinit var year : EditText
+
+
+    internal var storage: FirebaseStorage? = null
+    internal var storageReference: StorageReference? = null
+    private var filename: String = ""
+    private var progress: Double = 0.0
+    private  var filePath: Uri? = null
+    private lateinit var db:CollectionReference
+    private lateinit var dataID:String
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

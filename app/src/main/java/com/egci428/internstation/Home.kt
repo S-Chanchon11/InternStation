@@ -58,21 +58,17 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
     lateinit var office: Location
     lateinit var curr: Location
     lateinit var nearbyArray:ArrayList<Float>
-    private var sensorManager: SensorManager? = null
-    private var lastUpdate: Long = 0
     lateinit var syncBtn: ImageView
     lateinit var progressBar : ProgressBar
-    var lat: Double = 0.0
-    var long:Double = 0.0
     lateinit var adapter: CompanyAdapter
 
-
+    private var sensorManager: SensorManager? = null
+    private var lastUpdate: Long = 0
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private val client = OkHttpClient()
-
-    private var progress = 0
-
+    var lat: Double = 0.0
+    var long:Double = 0.0
     val jsonURL =
         "https://internstation-47c4f-default-rtdb.firebaseio.com/.json"
 
@@ -80,9 +76,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         dataList = mutableListOf()
         nearbyArray = ArrayList()
+
         progressBar = findViewById(R.id.progressBar)
         dropDown = findViewById(R.id.imageView)
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -94,43 +90,33 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         lastUpdate = System.currentTimeMillis()
-
         navigationView.setNavigationItemSelectedListener(this)
+
         title.setText("Main Menu")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val linearLayoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = linearLayoutManager
+
         locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 lat = location.latitude
                 long = location.longitude
-                Log.d(
-                    "Location in listener ",
-                    lat.toString() + "," + long.toString()
-                )
-
                 if(progressBar.visibility==0){
                     loadJson()
                 }
                 progressBar.setVisibility(View.INVISIBLE)
-
             }
         }
         progressBar.setVisibility(View.VISIBLE)
-
         if(lat==0.0&&long==0.0){
             request_location()
         }
-
-
 
         curr = Location("current")
         office = Location("office")
 
         userID = intent.getStringExtra("userID").toString()
-        Log.d("onCreate of Home",userID)
-
 
         dropDown.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -139,12 +125,11 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         syncBtn.setOnClickListener {
             request_location()
             loadJson()
-
         }
 
         if(userID.isNullOrEmpty()){
             userID = intent.getStringExtra("userID").toString()
-            Log.d("userID is null",userID)
+
         }
     }
 
@@ -275,7 +260,6 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
         intent.putExtra("companyLat", company.lat)
         intent.putExtra("companyLong",company.long)
         intent.putExtra("userID",userID)
-        Log.d("showdetail()","finished send intent")
         setResult(Activity.RESULT_OK,intent)
         startActivityForResult(intent,101)
     }
@@ -291,18 +275,11 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
             office.longitude = companyObj[i].long
             val distance = curr.distanceTo(office)/1000
             companyObj[i].distance = distance.toDouble()
-            Log.d("calculateDistance",companyObj[i].company +"     "+ distance.toString())
             i++
         }
-
-
     }
-
     private fun getAccelerometer(event: SensorEvent){
-
-
         val values = event.values
-
         val x = values[0]
         val y = values[1]
         val z = values[2]
@@ -315,12 +292,9 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 return
             }
             lastUpdate = actualTime
-
             loadJson()
-
         }
     }
-
     override fun onSensorChanged(event: SensorEvent) {
         if(event.sensor.type == Sensor.TYPE_ACCELEROMETER){
             getAccelerometer(event)

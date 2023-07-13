@@ -38,37 +38,35 @@ class Login : AppCompatActivity() {
         loginBtn.setOnClickListener {
             val readUsername = username.text.toString()
             val readPassword = password.text.toString()
-            Log.d("LOGIN","FLG 1")
+
             var db = dataReference.collection("userData")
             db.orderBy("fullname").get()
                 .addOnSuccessListener { snapshot ->
                     if(snapshot!=null){
                         dataList.clear()
                         val dataObj = snapshot.toObjects(UserData::class.java)
-                        Log.d("LOGIN","BEGIN REQUEST DATA")
-                        Log.d("LOGIN",dataObj.toString())
+
 
                         for(dataObj in dataObj){
                             dataList.add(dataObj)
-                            Log.d("LOGIN",dataObj.username)
-                            Log.d("LOGIN",dataObj.password)
+
                             val firebase_username = dataObj.username
                             val firebase_password = dataObj.password
                             if(firebase_username==readUsername && firebase_password==readPassword){
-                                Log.d("LOGIN","USERNAME AND PASSWORD IS MATCH")
+
                                 val intent = Intent(this, Home::class.java)
                                 intent.putExtra("userID",dataObj.id)
-                                Log.d("LOGIN",dataObj.id)
+
                                 Toast.makeText(baseContext, "Login Success", Toast.LENGTH_SHORT).show()
                                 startActivity(intent)
                                 break
                             }else if (dataList.equals(dataList.lastIndex)){
-                                Log.d("LOGIN","USERNAME AND PASSWORD IS NOT MATCH")
+
                                 password.text.clear()
-                                Toast.makeText(baseContext, "Incorrect Username/Password", Toast.LENGTH_LONG).show()
+                                Toast.makeText(baseContext, "Incorrect Username/Password", Toast.LENGTH_SHORT).show()
                             }
                         }
-                        Log.d("LOGIN","END OF GET DATA")
+
                     }
                 }
                 .addOnFailureListener {
