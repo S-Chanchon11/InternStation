@@ -217,11 +217,8 @@ class Home : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListene
                 recyclerView.adapter = adapter
                 adapter.setOnItemClickListener(object : CompanyAdapter.onItemClickListener {
                     override fun onItemClick(position: Int) {
-
                         val dataPos = companyObj[position]
                         showDetail(dataPos,position)
-
-                        Toast.makeText(this@Home, "Cicked on $position", Toast.LENGTH_SHORT).show()
                     }
                 })
                 adapter.notifyDataSetChanged()

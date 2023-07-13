@@ -26,7 +26,7 @@ class Profile : AppCompatActivity() {
     lateinit var university: TextView
     lateinit var Dob: TextView
     lateinit var ProfileTitle: TextView
-    lateinit var name: EditText
+    lateinit var name: TextView
     lateinit var dataList: MutableList<UserData>
     lateinit var userID:String
     lateinit var userImage:ImageView
@@ -64,7 +64,8 @@ class Profile : AppCompatActivity() {
                         if(firebase_username==userID){
                             name.setText(dataObj.fullname)
                             university.setText(dataObj.university)
-                            Dob.setText(dataObj.Dob)
+                            Log.d("DOB",dataObj.dob)
+                            Dob.setText(dataObj.dob)
 
                             break
                         }else if(userObj.lastIndex==userObj.size){
